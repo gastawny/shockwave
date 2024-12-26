@@ -1,16 +1,13 @@
 package com.gastawny.shockwave.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.io.Serial;
-import java.util.Objects;
-
-@Entity
-@Table(name = "form_threats")
+@Entity(name = "form_threats")
+@Getter
+@Setter
 public class FormThreatEntity {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,24 +16,4 @@ public class FormThreatEntity {
 
     @Column
     private String name;
-
-    public FormThreatEntity() { }
-
-    public FormThreatEntity(Long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FormThreatEntity that = (FormThreatEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name);
-    }
 }

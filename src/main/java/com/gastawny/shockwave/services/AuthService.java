@@ -2,7 +2,9 @@ package com.gastawny.shockwave.services;
 
 import com.gastawny.shockwave.data.dto.AccountCredentialsDTO;
 import com.gastawny.shockwave.data.dto.TokenDTO;
+import com.gastawny.shockwave.entities.ExplosiveEntity;
 import com.gastawny.shockwave.entities.UserEntity;
+import com.gastawny.shockwave.repositories.ExplosiveRepository;
 import com.gastawny.shockwave.repositories.UserRepository;
 import com.gastawny.shockwave.security.jwt.JwtTokenProvider;
 import org.springframework.http.ResponseEntity;
@@ -12,17 +14,21 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class AuthService {
 
     private JwtTokenProvider tokenProvider;
     private AuthenticationManager authenticationManager;
     private UserRepository repository;
+    private ExplosiveRepository explosiveRepository;
 
-    public AuthService(JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager, UserRepository repository) {
+    public AuthService(JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager, UserRepository repository, ExplosiveRepository explosiveRepository) {
         this.tokenProvider = tokenProvider;
         this.authenticationManager = authenticationManager;
         this.repository = repository;
+        this.explosiveRepository = explosiveRepository;
     }
 
     public ResponseEntity<TokenDTO> signIn(AccountCredentialsDTO data) {
@@ -70,5 +76,9 @@ public class AuthService {
         ));
 
         return signIn(data);
+    }
+
+    public List<ExplosiveEntity> getExplosives() {
+        return explosiveRepository.findAll();
     }
 }

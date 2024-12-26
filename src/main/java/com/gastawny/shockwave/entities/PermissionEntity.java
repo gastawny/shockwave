@@ -1,18 +1,14 @@
 package com.gastawny.shockwave.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Objects;
-
-@Entity
-@Table(name = "permissions")
-public class PermissionEntity implements GrantedAuthority, Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
+@Entity(name = "permissions")
+@Getter
+@Setter
+public class PermissionEntity implements GrantedAuthority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,39 +18,8 @@ public class PermissionEntity implements GrantedAuthority, Serializable {
     @Column
     private String description;
 
-    public PermissionEntity() { }
-
     @Override
     public String getAuthority() {
         return this.description;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PermissionEntity that = (PermissionEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(description, that.description);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, description);
     }
 }

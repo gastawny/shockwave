@@ -1,16 +1,13 @@
 package com.gastawny.shockwave.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.io.Serial;
-import java.util.Objects;
-
-@Entity
-@Table(name = "located_objects")
+@Entity(name = "located_objects")
+@Getter
+@Setter
 public class LocatedObjectEntity {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,49 +21,4 @@ public class LocatedObjectEntity {
     @ManyToOne
     @JoinColumn(name = "ground_id")
     private GroundEntity ground;
-
-    public LocatedObjectEntity() { }
-
-    public LocatedObjectEntity(Long id, ExplosiveEntity explosive, GroundEntity ground) {
-        this.id = id;
-        this.explosive = explosive;
-        this.ground = ground;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public ExplosiveEntity getExplosive() {
-        return explosive;
-    }
-
-    public void setExplosive(ExplosiveEntity explosive) {
-        this.explosive = explosive;
-    }
-
-    public GroundEntity getGround() {
-        return ground;
-    }
-
-    public void setGround(GroundEntity ground) {
-        this.ground = ground;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        LocatedObjectEntity that = (LocatedObjectEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(explosive, that.explosive) && Objects.equals(ground, that.ground);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, explosive, ground);
-    }
 }

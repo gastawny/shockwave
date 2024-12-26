@@ -2,9 +2,9 @@ package com.gastawny.shockwave.data.enums;
 
 public enum ValueType {
 
-    STRING("str"),
-    NUMBER("num"),
-    TEXT("text");
+    STRING("STR"),
+    NUMBER("NUM"),
+    TEXT("TEXT");
 
     private final String value;
 

@@ -37,7 +37,6 @@ CREATE TABLE data_types
     data_type_id  BIGINT AUTO_INCREMENT NOT NULL,
     name          VARCHAR(255) NULL,
     `description` VARCHAR(255) NULL,
-    is_multiple   BIT(1) NULL,
     value_type    VARCHAR(255) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NULL,
@@ -86,8 +85,9 @@ CREATE TABLE form_threats
 
 CREATE TABLE grounds
 (
-    ground_id BIGINT AUTO_INCREMENT NOT NULL,
-    k         VARCHAR(255) NULL,
+    ground_id  BIGINT AUTO_INCREMENT NOT NULL,
+    name       VARCHAR(255) NOT NULL,
+    k          DOUBLE NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NULL,
     is_deleted BIT(1) NULL,
@@ -219,7 +219,7 @@ CREATE TABLE value_str_entity
 CREATE TABLE value_text_entity
 (
     data_id BIGINT NOT NULL,
-    value   VARCHAR(255) NULL,
+    value   TEXT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NULL,
     is_deleted BIT(1) NULL,
