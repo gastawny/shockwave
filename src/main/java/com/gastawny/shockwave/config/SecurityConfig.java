@@ -20,9 +20,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
 
-//    @Autowired
-//    private JwtTokenProvider jwtTokenProvider;
-
     @Bean
     public JwtTokenProvider jwtTokenProvider() {
         return new JwtTokenProvider();

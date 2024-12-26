@@ -20,13 +20,11 @@ public class UserEntity implements UserDetails, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long id;
 
     @Column(name = "user_name", unique = true)
     private String userName;
-
-    @Column(name = "full_name")
-    private String fullName;
 
     @Column
     private String password;
@@ -45,11 +43,16 @@ public class UserEntity implements UserDetails, Serializable {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_permission",
-            joinColumns = {@JoinColumn(name = "id_user")}, inverseJoinColumns = {@JoinColumn(name = "id_permission")}
+            joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "permission_id")}
     )
     private List<PermissionEntity> permissions;
 
     public UserEntity() { }
+
+    public UserEntity(String userName, String password) {
+        this.userName = userName;
+        this.password = password;
+    }
 
     public List<String> getRoles() {
         List<String> roles = new ArrayList<>();
@@ -111,14 +114,6 @@ public class UserEntity implements UserDetails, Serializable {
         this.userName = userName;
     }
 
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
     public void setPassword(String password) {
         this.password = password;
     }
@@ -152,11 +147,11 @@ public class UserEntity implements UserDetails, Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserEntity user = (UserEntity) o;
-        return accountNonExpired == user.accountNonExpired && accountNonLocked == user.accountNonLocked && credentialsNonExpired == user.credentialsNonExpired && enabled == user.enabled && Objects.equals(id, user.id) && Objects.equals(userName, user.userName) && Objects.equals(fullName, user.fullName) && Objects.equals(password, user.password) && Objects.equals(permissions, user.permissions);
+        return accountNonExpired == user.accountNonExpired && accountNonLocked == user.accountNonLocked && credentialsNonExpired == user.credentialsNonExpired && enabled == user.enabled && Objects.equals(id, user.id) && Objects.equals(userName, user.userName) && Objects.equals(password, user.password) && Objects.equals(permissions, user.permissions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userName, fullName, password, accountNonExpired, accountNonLocked, credentialsNonExpired, enabled, permissions);
+        return Objects.hash(id, userName, password, accountNonExpired, accountNonLocked, credentialsNonExpired, enabled, permissions);
     }
 }

@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@Table(name = "permission")
+@Table(name = "permissions")
 public class PermissionEntity implements GrantedAuthority, Serializable {
 
     @Serial
@@ -16,12 +16,13 @@ public class PermissionEntity implements GrantedAuthority, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "permission_id")
     private Long id;
-
-    public PermissionEntity() { }
 
     @Column
     private String description;
+
+    public PermissionEntity() { }
 
     @Override
     public String getAuthority() {
