@@ -1,19 +1,22 @@
-package com.gastawny.shockwave.entities;
+package com.gastawny.shockwave.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity(name = "form_threats")
+@Entity(name = "grounds")
 @Getter
 @Setter
-public class FormThreatEntity {
+public class Ground {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "form_threat_id")
+    @Column(name = "ground_id")
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String name;
+
+    @Column
+    private Double k;
 }

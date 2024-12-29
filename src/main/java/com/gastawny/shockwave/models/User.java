@@ -1,4 +1,4 @@
-package com.gastawny.shockwave.entities;
+package com.gastawny.shockwave.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -6,7 +6,6 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -15,7 +14,7 @@ import java.util.List;
 @Table(name = "users")
 @Getter
 @Setter
-public class UserEntity implements UserDetails {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,18 +43,18 @@ public class UserEntity implements UserDetails {
             name = "user_permission",
             joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "permission_id")}
     )
-    private List<PermissionEntity> permissions;
+    private List<Permission> permissions;
 
-    public UserEntity() { }
+    public User() { }
 
-    public UserEntity(String userName, String password) {
+    public User(String userName, String password) {
         this.userName = userName;
         this.password = password;
     }
 
     public List<String> getRoles() {
         List<String> roles = new ArrayList<>();
-        for (PermissionEntity permission : permissions) {
+        for (Permission permission : permissions) {
             roles.add(permission.getDescription());
         }
 

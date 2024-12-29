@@ -1,4 +1,4 @@
-package com.gastawny.shockwave.entities;
+package com.gastawny.shockwave.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.Setter;
 @Entity(name = "located_objects")
 @Getter
 @Setter
-public class LocatedObjectEntity {
+public class LocatedObject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,9 +16,9 @@ public class LocatedObjectEntity {
 
     @ManyToOne
     @JoinColumn(name = "explosive_id")
-    private ExplosiveEntity explosive;
+    private Explosive explosive;
 
     @ManyToOne
     @JoinColumn(name = "ground_id")
-    private GroundEntity ground;
+    private Ground ground;
 }

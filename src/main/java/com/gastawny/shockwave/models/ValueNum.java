@@ -1,4 +1,4 @@
-package com.gastawny.shockwave.entities;
+package com.gastawny.shockwave.models;
 
 import jakarta.persistence.Entity;
 import lombok.EqualsAndHashCode;
@@ -9,13 +9,13 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class ValueNumEntity extends ValueEntity{
+public class ValueNum extends Value {
 
     private Double value;
 
-    public ValueNumEntity() { }
+    public ValueNum() { }
 
-    public ValueNumEntity(Long dataId, DataEntity data, Double value) {
+    public ValueNum(Long dataId, Data data, Double value) {
         super(dataId, data);
         this.value = value;
     }

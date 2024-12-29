@@ -1,4 +1,4 @@
-package com.gastawny.shockwave.entities;
+package com.gastawny.shockwave.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.Setter;
 @Entity(name = "explosives")
 @Getter
 @Setter
-public class ExplosiveEntity {
+public class Explosive {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

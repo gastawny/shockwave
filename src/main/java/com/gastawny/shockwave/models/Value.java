@@ -1,4 +1,4 @@
-package com.gastawny.shockwave.entities;
+package com.gastawny.shockwave.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import lombok.Setter;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
-public abstract class ValueEntity {
+public abstract class Value {
 
     @Id
     private Long dataId;
@@ -16,11 +16,11 @@ public abstract class ValueEntity {
     @OneToOne
     @MapsId
     @JoinColumn(name = "data_id")
-    private DataEntity data;
+    private Data data;
 
-    public ValueEntity() { }
+    public Value() { }
 
-    public ValueEntity(Long dataId, DataEntity data) {
+    public Value(Long dataId, Data data) {
         this.dataId = dataId;
         this.data = data;
     }

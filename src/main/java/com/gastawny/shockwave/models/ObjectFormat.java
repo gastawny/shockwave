@@ -1,4 +1,4 @@
-package com.gastawny.shockwave.entities;
+package com.gastawny.shockwave.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import java.util.List;
 @Entity(name = "object_formats")
 @Getter
 @Setter
-public class ObjectFormatEntity {
+public class ObjectFormat {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,7 +17,7 @@ public class ObjectFormatEntity {
     private Long id;
 
     @OneToMany(mappedBy = "objectFormat", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ObjectFormulaParameterEntity> objectFormulaParameters;
+    private List<ObjectFormulaParameter> objectFormulaParameters;
 
     @Column
     private String name;

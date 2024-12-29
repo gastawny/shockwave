@@ -2,8 +2,7 @@ package com.gastawny.shockwave.services;
 
 import com.gastawny.shockwave.data.dto.AccountCredentialsDTO;
 import com.gastawny.shockwave.data.dto.TokenDTO;
-import com.gastawny.shockwave.entities.ExplosiveEntity;
-import com.gastawny.shockwave.entities.UserEntity;
+import com.gastawny.shockwave.models.User;
 import com.gastawny.shockwave.repositories.ExplosiveRepository;
 import com.gastawny.shockwave.repositories.UserRepository;
 import com.gastawny.shockwave.security.jwt.JwtTokenProvider;
@@ -13,8 +12,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class AuthService {
@@ -70,15 +67,11 @@ public class AuthService {
             return ResponseEntity.badRequest().body(null);
         }
 
-        var newUser = repository.save(new UserEntity(
+        var newUser = repository.save(new User(
                 data.getUsername(),
                 data.getPassword()
         ));
 
         return signIn(data);
-    }
-
-    public List<ExplosiveEntity> getExplosives() {
-        return explosiveRepository.findAll();
     }
 }

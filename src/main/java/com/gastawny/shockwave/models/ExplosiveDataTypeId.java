@@ -1,10 +1,8 @@
-package com.gastawny.shockwave.entities;
+package com.gastawny.shockwave.models;
 
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Objects;
 
 @Embeddable
 @Getter

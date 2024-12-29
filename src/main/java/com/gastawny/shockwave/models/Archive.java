@@ -1,22 +1,25 @@
-package com.gastawny.shockwave.entities;
+package com.gastawny.shockwave.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity(name = "grounds")
+@Entity(name = "archives")
 @Getter
 @Setter
-public class GroundEntity {
+public class Archive {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ground_id")
+    @Column(name = "archive_id")
     private Long id;
 
-    @Column(nullable = false)
+    @Column
     private String name;
 
     @Column
-    private Double k;
+    private String path;
+
+    @Column
+    private byte[] data;
 }

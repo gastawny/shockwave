@@ -1,4 +1,4 @@
-package com.gastawny.shockwave.entities;
+package com.gastawny.shockwave.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.Setter;
 @Entity(name = "object_formula_parameter_values")
 @Getter
 @Setter
-public class ObjectFormulaParameterValueEntity {
+public class ObjectFormulaParameterValue {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,11 +16,11 @@ public class ObjectFormulaParameterValueEntity {
 
     @ManyToOne
     @JoinColumn(name = "object_formula_parameter_id")
-    private ObjectFormulaParameterEntity objectFormulaParameter;
+    private ObjectFormulaParameter objectFormulaParameter;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "located_object_id")
-    private LocatedObjectEntity locatedObject;
+    private LocatedObject locatedObject;
 
     @Column
     private Double value;

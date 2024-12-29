@@ -1,4 +1,4 @@
-package com.gastawny.shockwave.entities;
+package com.gastawny.shockwave.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 @Entity(name = "permissions")
 @Getter
 @Setter
-public class PermissionEntity implements GrantedAuthority {
+public class Permission implements GrantedAuthority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

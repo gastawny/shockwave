@@ -1,25 +1,19 @@
-package com.gastawny.shockwave.entities;
+package com.gastawny.shockwave.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity(name = "archives")
+@Entity(name = "form_threats")
 @Getter
 @Setter
-public class ArchiveEntity {
+public class FormThreat {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "archive_id")
+    @Column(name = "form_threat_id")
     private Long id;
 
     @Column
     private String name;
-
-    @Column
-    private String path;
-
-    @Column
-    private byte[] data;
 }

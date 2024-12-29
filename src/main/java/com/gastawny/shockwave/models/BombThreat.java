@@ -1,4 +1,4 @@
-package com.gastawny.shockwave.entities;
+package com.gastawny.shockwave.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import java.util.List;
 @Entity(name = "bomb_threats")
 @Getter
 @Setter
-public class BombThreatEntity {
+public class BombThreat {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,22 +18,22 @@ public class BombThreatEntity {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
-    private UserEntity user;
+    private User user;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "form_threat_id")
-    private FormThreatEntity formThreat;
+    private FormThreat formThreat;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "located_object_id")
-    private LocatedObjectEntity locatedObject;
+    private LocatedObject locatedObject;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "bomb_threat_archive",
             joinColumns = {@JoinColumn(name = "bomb_threat_id")}, inverseJoinColumns = {@JoinColumn(name = "archive_id")}
     )
-    private List<ArchiveEntity> archives;
+    private List<Archive> archives;
 
     @Column
     private String name;

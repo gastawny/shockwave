@@ -2,17 +2,13 @@ package com.gastawny.shockwave.controllers;
 
 import com.gastawny.shockwave.data.dto.AccountCredentialsDTO;
 import com.gastawny.shockwave.data.dto.TokenDTO;
-import com.gastawny.shockwave.entities.ExplosiveEntity;
 import com.gastawny.shockwave.services.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(name = "Authentication Endpoint")
 @RestController
@@ -60,12 +56,6 @@ public class AuthController {
     @PostMapping(path = "/signup")
     public ResponseEntity<TokenDTO> signUp(@Valid @RequestBody AccountCredentialsDTO data) {
         return authServices.signUp(data);
-    }
-
-    @Operation(summary = "Sign up a new user")
-    @GetMapping(path = "/explosive")
-    public List<ExplosiveEntity> explosive() {
-        return authServices.getExplosives();
     }
 
     private static boolean checkIfParamsNotNull(String username, String refreshToken) {

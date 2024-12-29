@@ -1,4 +1,4 @@
-package com.gastawny.shockwave.entities;
+package com.gastawny.shockwave.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.Setter;
 @Entity(name = "object_formula_parameters")
 @Getter
 @Setter
-public class ObjectFormulaParameterEntity {
+public class ObjectFormulaParameter {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,5 +28,5 @@ public class ObjectFormulaParameterEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "object_format_id")
-    private ObjectFormatEntity objectFormat;
+    private ObjectFormat objectFormat;
 }
