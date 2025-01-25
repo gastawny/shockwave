@@ -7,7 +7,7 @@ import lombok.Setter;
 @Entity(name = "located_objects")
 @Getter
 @Setter
-public class LocatedObject {
+public class LocatedObject extends BaseModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

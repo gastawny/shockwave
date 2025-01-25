@@ -1,4 +1,4 @@
-package com.gastawny.shockwave.data.enums;
+package com.gastawny.shockwave.enums;
 
 public enum ValueType {
 

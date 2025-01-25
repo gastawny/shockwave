@@ -7,7 +7,7 @@ import lombok.Setter;
 @Entity(name = "form_threats")
 @Getter
 @Setter
-public class FormThreat {
+public class FormThreat extends BaseModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -8,7 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 @Entity(name = "permissions")
 @Getter
 @Setter
-public class Permission implements GrantedAuthority {
+public class Permission extends BaseModel implements GrantedAuthority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

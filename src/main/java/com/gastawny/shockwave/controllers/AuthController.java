@@ -1,7 +1,7 @@
 package com.gastawny.shockwave.controllers;
 
-import com.gastawny.shockwave.data.dto.AccountCredentialsDTO;
-import com.gastawny.shockwave.data.dto.TokenDTO;
+import com.gastawny.shockwave.dto.AccountCredentialsDTO;
+import com.gastawny.shockwave.dto.TokenDTO;
 import com.gastawny.shockwave.services.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

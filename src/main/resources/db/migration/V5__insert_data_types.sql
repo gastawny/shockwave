@@ -1,0 +1,15 @@
+insert into shockwave.data_types (data_type_id, name, description, value_type)
+values  (1, 'Ficha técnica', null, 'STR'),
+        (2, 'Nomes', null, 'STR'),
+        (3, 'Composição', null, 'STR'),
+        (4, 'Fórmula química', null, 'STR'),
+        (5, 'Utilização', null, 'TEXT'),
+        (6, 'Efeito Relativo TNT', null, 'NUM'),
+        (7, 'Densidade (g/cm³)', null, 'NUM'),
+        (8, 'Velocidade de detonação (m/s)', null, 'NUM'),
+        (9, 'Sensibilidade ao choque (cm)', null, 'NUM'),
+        (10, 'Sensibilidade ao calor (°C)', null, 'NUM'),
+        (11, 'Produção de gases (L/Kg)', null, 'NUM'),
+        (12, 'Produção de gases tóxicos (Balanço de oxigênio em %)', null, null),
+        (13, 'Resistência a água', null, null),
+        (14, 'Características físicas', null, null);

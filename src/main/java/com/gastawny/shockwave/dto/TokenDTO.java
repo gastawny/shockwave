@@ -1,4 +1,4 @@
-package com.gastawny.shockwave.data.dto;
+package com.gastawny.shockwave.dto;
 
 import java.io.Serial;
 import java.io.Serializable;

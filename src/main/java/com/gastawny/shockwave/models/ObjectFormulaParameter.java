@@ -7,7 +7,7 @@ import lombok.Setter;
 @Entity(name = "object_formula_parameters")
 @Getter
 @Setter
-public class ObjectFormulaParameter {
+public class ObjectFormulaParameter extends BaseModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -9,7 +9,7 @@ import java.util.List;
 @Entity(name = "object_formats")
 @Getter
 @Setter
-public class ObjectFormat {
+public class ObjectFormat extends BaseModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

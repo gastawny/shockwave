@@ -9,7 +9,7 @@ import java.util.List;
 @Entity(name = "post_explosions")
 @Getter
 @Setter
-public class PostExplosion {
+public class PostExplosion extends BaseModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

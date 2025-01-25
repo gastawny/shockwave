@@ -7,7 +7,7 @@ import lombok.Setter;
 @Entity(name = "grounds")
 @Getter
 @Setter
-public class Ground {
+public class Ground extends BaseModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

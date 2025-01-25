@@ -1,6 +1,6 @@
 package com.gastawny.shockwave.models;
 
-import com.gastawny.shockwave.data.enums.ValueType;
+import com.gastawny.shockwave.enums.ValueType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +8,7 @@ import lombok.Setter;
 @Entity(name = "data_types")
 @Getter
 @Setter
-public class DataType {
+public class DataType extends BaseModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

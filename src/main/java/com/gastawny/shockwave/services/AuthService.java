@@ -1,7 +1,7 @@
 package com.gastawny.shockwave.services;
 
-import com.gastawny.shockwave.data.dto.AccountCredentialsDTO;
-import com.gastawny.shockwave.data.dto.TokenDTO;
+import com.gastawny.shockwave.dto.AccountCredentialsDTO;
+import com.gastawny.shockwave.dto.TokenDTO;
 import com.gastawny.shockwave.models.User;
 import com.gastawny.shockwave.repositories.ExplosiveRepository;
 import com.gastawny.shockwave.repositories.UserRepository;
