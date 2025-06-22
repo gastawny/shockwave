@@ -13,8 +13,8 @@ public class ValueStr extends Value {
 
     public ValueStr() { }
 
-    public ValueStr(Long dataId, Data data, String value) {
-        super(dataId, data);
+    public ValueStr(Long valueId, String value) {
+        super(valueId);
         this.value = value;
     }
 }

@@ -13,8 +13,8 @@ public class ValueText extends Value {
 
     public ValueText() { }
 
-    public ValueText(Long dataId, Data data, String value) {
-        super(dataId, data);
+    public ValueText(Long valueId, String value) {
+        super(valueId);
         this.value = value;
     }
 }

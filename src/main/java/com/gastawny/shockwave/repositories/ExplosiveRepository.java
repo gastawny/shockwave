@@ -14,9 +14,9 @@ public interface ExplosiveRepository extends JpaRepository<Explosive, Long> {
 
     @Query(value = "SELECT d.data_id, d.data_type_id, dt.value_type, dt.name,\n" +
             "    CASE\n" +
-            "        WHEN dt.value_type = 'STR' THEN (SELECT v.value FROM value_str v WHERE v.data_id = d.data_id)\n" +
-            "        WHEN dt.value_type = 'NUM' THEN (SELECT v.value FROM value_num v WHERE v.data_id = d.data_id)\n" +
-            "        WHEN dt.value_type = 'TEXT' THEN (SELECT v.value FROM value_text v WHERE v.data_id = d.data_id)\n" +
+            "        WHEN dt.value_type = 'STR' THEN (SELECT v.value FROM value_str v WHERE v.value_id = d.value_id)\n" +
+            "        WHEN dt.value_type = 'NUM' THEN (SELECT v.value FROM value_num v WHERE v.value_id = d.value_id)\n" +
+            "        WHEN dt.value_type = 'TEXT' THEN (SELECT v.value FROM value_text v WHERE v.value_id = d.value_id)\n" +
             "    END AS value\n" +
             "    FROM explosives e\n" +
             "    JOIN explosive_data_type edt ON e.explosive_id = edt.explosive_id\n" +

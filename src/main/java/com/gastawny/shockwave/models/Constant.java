@@ -4,25 +4,26 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity(name = "datas")
+@Entity(name = "constants")
 @Getter
 @Setter
-public class Data extends BaseModel {
+public class Constant extends BaseModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "data_id")
+    @Column(name = "constant_id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "data_type_id", nullable = false)
-    private DataType dataType;
+    @Column(length = 50, unique = true)
+    private String symbol;
 
-    @ManyToOne
-    @JoinColumn(name = "explosive_id", nullable = false)
-    private Explosive explosive;
+    @Column
+    private String name;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "value_id")
     private Value value;
+
+    @Column(length = 20)
+    private String unit;
 }

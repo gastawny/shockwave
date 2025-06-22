@@ -1,27 +1,23 @@
 package com.gastawny.shockwave.models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public abstract class Value {
 
     @Id
-    private Long dataId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "value_id")
+    private Long id;
 
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "data_id")
-    private Data data;
-
-    public Value() { }
-
-    public Value(Long dataId, Data data) {
-        this.dataId = dataId;
-        this.data = data;
-    }
+    public abstract Object getValue();
 }
