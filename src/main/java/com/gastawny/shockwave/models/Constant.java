@@ -1,12 +1,14 @@
 package com.gastawny.shockwave.models;
 
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity(name = "constants")
 @Getter
 @Setter
+@EqualsAndHashCode
 public class Constant extends BaseModel {
 
     @Id

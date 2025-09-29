@@ -1,12 +1,14 @@
 package com.gastawny.shockwave.models;
 
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity(name = "parameters")
 @Getter
 @Setter
+@EqualsAndHashCode
 public class Parameter extends BaseModel {
 
     @Id
@@ -22,4 +24,6 @@ public class Parameter extends BaseModel {
 
     @Column(length = 20)
     private String unit;
+
+
 }

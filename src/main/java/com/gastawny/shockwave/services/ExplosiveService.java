@@ -1,6 +1,5 @@
 package com.gastawny.shockwave.services;
 
-import com.gastawny.shockwave.dto.data.DataDTO;
 import com.gastawny.shockwave.models.Explosive;
 import com.gastawny.shockwave.repositories.ExplosiveRepository;
 import org.springframework.stereotype.Service;
@@ -17,7 +16,7 @@ public class ExplosiveService {
         this.explosiveRepository = explosiveRepository;
     }
 
-    public List<Explosive> getAllExplosives() {
+    public List<Explosive> findAll() {
         return explosiveRepository.findAll();
     }
 

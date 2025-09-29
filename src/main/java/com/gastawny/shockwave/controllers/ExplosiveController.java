@@ -25,7 +25,7 @@ public class ExplosiveController {
 
     @GetMapping
     public ResponseEntity<List<Explosive>> getAllExplosives() {
-        return ResponseEntity.ok(explosiveService.getAllExplosives());
+        return ResponseEntity.ok(explosiveService.findAll());
     }
 
     @GetMapping(path = "datas/{id}")

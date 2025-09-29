@@ -15,23 +15,23 @@ public class GroundService {
         this.groundRepository = groundRepository;
     }
 
-    public List<Ground> getAllGrounds() {
+    public List<Ground> findAll() {
         return groundRepository.findAll();
     }
 
-    public Ground getGroundById(Long id) {
+    public Ground findById(Long id) {
         return groundRepository.findById(id).orElse(null);
     }
 
-    public Ground saveGround(Ground ground) {
+    public Ground save(Ground ground) {
         return groundRepository.save(ground);
     }
 
-    public Ground updateGround(Ground ground) {
+    public Ground update(Ground ground) {
         return groundRepository.save(ground);
     }
 
-    public void deleteGroundById(Long id) {
+    public void deleteById(Long id) {
         groundRepository.deleteById(id);
     }
 }

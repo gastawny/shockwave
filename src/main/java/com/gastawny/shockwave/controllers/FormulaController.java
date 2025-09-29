@@ -1,5 +1,6 @@
 package com.gastawny.shockwave.controllers;
 
+import com.gastawny.shockwave.dto.formula.FormulaExpandedDTO;
 import com.gastawny.shockwave.models.Formula;
 import com.gastawny.shockwave.services.FormulaService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.beans.Expression;
 import java.util.Optional;
 
 @Tag(name = "Formulas Endpoint")
@@ -29,7 +29,12 @@ public class FormulaController {
     }
 
     @GetMapping(path = "/executable/{id}")
-    public ResponseEntity<Object> getExecutableExpressionById(@PathVariable Long id) {
+    public ResponseEntity<Double> getExecutableExpressionById(@PathVariable Long id) {
         return ResponseEntity.ok(formulaService.getExecutableExpressionById(id));
+    }
+
+    @GetMapping(path = "/expanded/{id}")
+    public ResponseEntity<FormulaExpandedDTO> getFormulaExpanded(@PathVariable Long id) {
+        return ResponseEntity.ok(formulaService.getFormulaExpanded(id));
     }
 }

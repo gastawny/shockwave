@@ -21,27 +21,27 @@ public class GroundController {
 
     @GetMapping
     public ResponseEntity<List<Ground>> getAllGrounds() {
-        return ResponseEntity.ok(groundService.getAllGrounds());
+        return ResponseEntity.ok(groundService.findAll());
     }
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<Ground> getGroundById(@PathVariable Long id) {
-        return ResponseEntity.ok(groundService.getGroundById(id));
+        return ResponseEntity.ok(groundService.findById(id));
     }
 
     @PostMapping
     public ResponseEntity<Ground> saveGround(@RequestBody Ground ground) {
-        return ResponseEntity.ok(groundService.saveGround(ground));
+        return ResponseEntity.ok(groundService.save(ground));
     }
 
     @PutMapping
     public ResponseEntity<Ground> updateGround(@RequestBody Ground ground) {
-        return ResponseEntity.ok(groundService.updateGround(ground));
+        return ResponseEntity.ok(groundService.update(ground));
     }
 
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<Void> deleteGroundById(@PathVariable Long id) {
-        groundService.deleteGroundById(id);
+        groundService.deleteById(id);
         return ResponseEntity.ok().build();
     }
 }
