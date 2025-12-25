@@ -16,9 +16,6 @@ public class ObjectFormat extends BaseModel {
     @Column(name = "object_format_id")
     private Long id;
 
-    @OneToMany(mappedBy = "objectFormat", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ObjectFormulaParameter> objectFormulaParameters;
-
     @Column
     private String name;
 }

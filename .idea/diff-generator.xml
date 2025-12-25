@@ -3,7 +3,7 @@
   <component name="DiffGenerationConfig">
     <option name="snapshotDb" value="false" />
     <option name="snapshotDbValue" value="07d81bf6-456a-439d-8681-cc82256161f6" />
-    <option name="snapshotModelValue" value="shockwave:entityManagerFactory" />
+    <option name="snapshotModelValue" value="shockwave:shockwave" />
     <option name="sourceModelValue" value="shockwave:shockwave" />
     <option name="targetDbValue" value="07d81bf6-456a-439d-8681-cc82256161f6" />
   </component>

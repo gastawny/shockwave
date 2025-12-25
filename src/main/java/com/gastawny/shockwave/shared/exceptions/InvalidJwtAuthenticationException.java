@@ -1,4 +1,4 @@
-package com.gastawny.shockwave.exceptions;
+package com.gastawny.shockwave.shared.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;

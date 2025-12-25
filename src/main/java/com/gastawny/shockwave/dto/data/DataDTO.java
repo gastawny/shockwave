@@ -1,6 +1,6 @@
 package com.gastawny.shockwave.dto.data;
 
-import com.gastawny.shockwave.enums.ValueType;
+import com.gastawny.shockwave.shared.enums.ValueType;
 import com.gastawny.shockwave.models.Value;
 import lombok.Data;
 

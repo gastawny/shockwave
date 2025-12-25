@@ -12,9 +12,4 @@ public class ValueStr extends Value {
     private String value;
 
     public ValueStr() { }
-
-    public ValueStr(Long valueId, String value) {
-        super(valueId);
-        this.value = value;
-    }
 }

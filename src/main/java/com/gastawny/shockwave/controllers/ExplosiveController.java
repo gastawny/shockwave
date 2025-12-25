@@ -23,11 +23,6 @@ public class ExplosiveController {
         this.explosiveService = explosiveService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<Explosive>> getAllExplosives() {
-        return ResponseEntity.ok(explosiveService.findAll());
-    }
-
     @GetMapping(path = "datas/{id}")
     public ResponseEntity<List<Map<String, Object>>> getDataByExplosiveId(@PathVariable Long id) {
         return ResponseEntity.ok(explosiveService.getDataByExplosiveId(id));

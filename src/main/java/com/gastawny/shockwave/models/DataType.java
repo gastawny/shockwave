@@ -1,6 +1,6 @@
 package com.gastawny.shockwave.models;
 
-import com.gastawny.shockwave.enums.ValueType;
+import com.gastawny.shockwave.shared.enums.ValueType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

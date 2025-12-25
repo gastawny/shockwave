@@ -14,9 +14,4 @@ public class ValueNum extends Value {
     private Double value;
 
     public ValueNum() { }
-
-    public ValueNum(Long valueId, Data data, Double value) {
-        super(valueId);
-        this.value = value;
-    }
 }

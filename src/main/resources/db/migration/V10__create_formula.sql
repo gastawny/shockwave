@@ -3,7 +3,7 @@ CREATE TABLE constants
     constant_id BIGINT AUTO_INCREMENT NOT NULL,
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at  datetime              NULL,
-    is_deleted  BIT(1) DEFAULT 0      NULL,
+    deleted  BIT(1) DEFAULT 0      NULL,
     symbol      VARCHAR(50)           NULL,
     name        VARCHAR(255)          NULL,
     value_id    BIGINT                NULL,
@@ -36,7 +36,7 @@ CREATE TABLE formulas
     formula_id BIGINT AUTO_INCREMENT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at datetime              NULL,
-    is_deleted BIT(1) DEFAULT 0      NULL,
+    deleted BIT(1) DEFAULT 0      NULL,
     name       VARCHAR(255)          NULL,
     expression VARCHAR(255)          NULL,
     CONSTRAINT pk_formulas PRIMARY KEY (formula_id)
@@ -47,12 +47,26 @@ CREATE TABLE parameters
     parameter_id BIGINT AUTO_INCREMENT NOT NULL,
     created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at   datetime              NULL,
-    is_deleted   BIT(1) DEFAULT 0      NULL,
+    deleted      BIT(1) DEFAULT 0      NULL,
     symbol       VARCHAR(50)           NULL,
     name         VARCHAR(255)          NULL,
     unit         VARCHAR(20)           NULL,
     CONSTRAINT pk_parameters PRIMARY KEY (parameter_id)
 );
+
+CREATE TABLE object_format_parameters
+(
+    object_format_parameter_id  BIGINT AUTO_INCREMENT NOT NULL,
+    object_format_id            BIGINT NOT NULL,
+    parameter_id                BIGINT NOT NULL,
+    CONSTRAINT pk_object_format_parameter_id PRIMARY KEY (object_format_parameter_id)
+);
+
+ALTER TABLE object_format_parameters
+    ADD CONSTRAINT fk_objforpar_on_object_format FOREIGN KEY (object_format_id) REFERENCES object_formats (object_format_id);
+
+ALTER TABLE object_format_parameters
+    ADD CONSTRAINT fk_objforpar_on_parameter FOREIGN KEY (parameter_id) REFERENCES parameters (parameter_id);
 
 ALTER TABLE constants
     ADD CONSTRAINT uc_constants_symbol UNIQUE (symbol);

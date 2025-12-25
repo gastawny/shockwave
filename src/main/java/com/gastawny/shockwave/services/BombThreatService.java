@@ -1,44 +1,73 @@
 package com.gastawny.shockwave.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gastawny.shockwave.dto.bombThreat.ReqBombThreatDTO;
+import com.gastawny.shockwave.handlers.Handler;
 import com.gastawny.shockwave.models.BombThreat;
+import com.gastawny.shockwave.models.LocatedObject;
 import com.gastawny.shockwave.repositories.BombThreatRepository;
 import com.gastawny.shockwave.repositories.FormThreatRepository;
 import com.gastawny.shockwave.repositories.LocatedObjectRepository;
 import com.gastawny.shockwave.repositories.UserRepository;
+import com.gastawny.shockwave.shared.GenericList;
 import org.springframework.stereotype.Service;
 
-@Service
-public class BombThreatService {
+import java.util.List;
 
-    private final LocatedObjectRepository locatedObjectRepository;
-    private final UserRepository userRepository;
-    private final FormThreatRepository formThreatRepository;
+@Service
+public class BombThreatService implements Handler<BombThreat> {
+
     private final BombThreatRepository bombThreatRepository;
 
-    public BombThreatService(LocatedObjectRepository locatedObjectRepository, UserRepository userRepository, FormThreatRepository formThreatRepository, BombThreatRepository bombThreatRepository) {
-        this.locatedObjectRepository = locatedObjectRepository;
-        this.userRepository = userRepository;
-        this.formThreatRepository = formThreatRepository;
+    public BombThreatService(BombThreatRepository bombThreatRepository) {
         this.bombThreatRepository = bombThreatRepository;
     }
 
-    public ReqBombThreatDTO save(ReqBombThreatDTO req) {
-        var locatedObject = locatedObjectRepository.getReferenceById(req.getLocatedObjectId());
-        var user = userRepository.getReferenceById(req.getUserId());
-        var formThreat = formThreatRepository.getReferenceById(req.getFormThreatId());
+    @Override
+    public String getType() {
+        return "bombThreats";
+    }
 
-        var bombThreat = new BombThreat();
+    @Override
+    public Class<BombThreat> getEntityClass() {
+        return BombThreat.class;
+    }
 
-        bombThreat.setLocatedObject(locatedObject);
-        bombThreat.setUser(user);
-        bombThreat.setFormThreat(formThreat);
-        bombThreat.setName(req.getName());
-        bombThreat.setFormThreatDescription(req.getFormThreatDescription());
-        bombThreat.setObjectNotFoundDescription(req.getObjectNotFoundDescription());
+    @Override
+    public Object getService() {
+        return new BombThreatService(bombThreatRepository);
+    }
 
-        bombThreatRepository.save(bombThreat);
+    @Override
+    public List<BombThreat> findAll() {
+        return List.of();
+    }
 
-        return req;
+    @Override
+    public BombThreat findById(Long id) {
+        return bombThreatRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public BombThreat save(Object entity) {
+        ObjectMapper mapper = new ObjectMapper();
+        BombThreat bombThreat = mapper.convertValue(entity, BombThreat.class);
+
+        return bombThreatRepository.save(bombThreat);
+    }
+
+    @Override
+    public BombThreat update(BombThreat entity) {
+        return bombThreatRepository.save(entity);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+
+    }
+
+    @Override
+    public List<GenericList> find2Select() {
+        return bombThreatRepository.findBy(GenericList.class);
     }
 }

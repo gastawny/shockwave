@@ -6,7 +6,7 @@ CREATE TABLE archives
     data       BLOB NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NULL,
-    is_deleted BIT(1) NULL,
+    deleted BIT(1) NULL,
     CONSTRAINT pk_archives PRIMARY KEY (archive_id)
 );
 
@@ -24,11 +24,10 @@ CREATE TABLE bomb_threats
     located_object_id            BIGINT NULL,
     name                         VARCHAR(255) NULL,
     form_threat_description      VARCHAR(255) NULL,
-    is_located_object            BIT(1) NULL,
     object_not_found_description VARCHAR(255) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NULL,
-    is_deleted BIT(1) NULL,
+    deleted BIT(1) NULL,
     CONSTRAINT pk_bomb_threats PRIMARY KEY (bomb_threat_id)
 );
 
@@ -40,7 +39,7 @@ CREATE TABLE data_types
     value_type    VARCHAR(255) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NULL,
-    is_deleted BIT(1) NULL,
+    deleted BIT(1) NULL,
     CONSTRAINT pk_data_types PRIMARY KEY (data_type_id)
 );
 
@@ -51,7 +50,7 @@ CREATE TABLE datas
     located_object_id BIGINT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NULL,
-    is_deleted BIT(1) NULL,
+    deleted BIT(1) NULL,
     CONSTRAINT pk_datas PRIMARY KEY (data_id)
 );
 
@@ -69,7 +68,7 @@ CREATE TABLE explosives
     name         VARCHAR(255) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NULL,
-    is_deleted BIT(1) NULL,
+    deleted BIT(1) NULL,
     CONSTRAINT pk_explosives PRIMARY KEY (explosive_id)
 );
 
@@ -79,7 +78,7 @@ CREATE TABLE form_threats
     name           VARCHAR(255) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NULL,
-    is_deleted BIT(1) NULL,
+    deleted BIT(1) NULL,
     CONSTRAINT pk_form_threats PRIMARY KEY (form_threat_id)
 );
 
@@ -90,7 +89,7 @@ CREATE TABLE grounds
     k          DOUBLE NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NULL,
-    is_deleted BIT(1) NULL,
+    deleted BIT(1) NULL,
     CONSTRAINT pk_grounds PRIMARY KEY (ground_id)
 );
 
@@ -99,9 +98,11 @@ CREATE TABLE located_objects
     located_object_id BIGINT AUTO_INCREMENT NOT NULL,
     explosive_id      BIGINT NULL,
     ground_id         BIGINT NULL,
+    object_format_id  BIGINT NULL,
+    name              VARCHAR(255) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NULL,
-    is_deleted BIT(1) NULL,
+    deleted BIT(1) NULL,
     CONSTRAINT pk_located_objects PRIMARY KEY (located_object_id)
 );
 
@@ -111,34 +112,8 @@ CREATE TABLE object_formats
     name             VARCHAR(255) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NULL,
-    is_deleted BIT(1) NULL,
+    deleted BIT(1) NULL,
     CONSTRAINT pk_object_formats PRIMARY KEY (object_format_id)
-);
-
-CREATE TABLE object_formula_parameter_values
-(
-    object_formula_parameter_value_id BIGINT AUTO_INCREMENT NOT NULL,
-    object_formula_parameter_id       BIGINT NULL,
-    located_object_id                 BIGINT NULL,
-    value DOUBLE NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP NULL,
-    is_deleted BIT(1) NULL,
-    CONSTRAINT pk_object_formula_parameter_values PRIMARY KEY (object_formula_parameter_value_id)
-);
-
-CREATE TABLE object_formula_parameters
-(
-    object_formula_parameters_id BIGINT AUTO_INCREMENT NOT NULL,
-    sequence                     TINYINT NULL,
-    content                      VARCHAR(255) NULL,
-    `description`                VARCHAR(255) NULL,
-    is_required                  BIT(1) NULL,
-    object_format_id             BIGINT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP NULL,
-    is_deleted BIT(1) NULL,
-    CONSTRAINT pk_object_formula_parameters PRIMARY KEY (object_formula_parameters_id)
 );
 
 CREATE TABLE permissions
@@ -147,7 +122,7 @@ CREATE TABLE permissions
     `description` VARCHAR(255) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NULL,
-    is_deleted BIT(1) NULL,
+    deleted BIT(1) NULL,
     CONSTRAINT pk_permissions PRIMARY KEY (permission_id)
 );
 
@@ -165,7 +140,7 @@ CREATE TABLE post_explosions
     `description`     VARCHAR(255) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NULL,
-    is_deleted BIT(1) NULL,
+    deleted BIT(1) NULL,
     CONSTRAINT pk_post_explosions PRIMARY KEY (post_explosion_id)
 );
 
@@ -192,7 +167,7 @@ CREATE TABLE value_entity
     data_id BIGINT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NULL,
-    is_deleted BIT(1) NULL,
+    deleted BIT(1) NULL,
     CONSTRAINT pk_valueentity PRIMARY KEY (data_id)
 );
 
@@ -202,7 +177,7 @@ CREATE TABLE value_num_entity
     value DOUBLE NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NULL,
-    is_deleted BIT(1) NULL,
+    deleted BIT(1) NULL,
     CONSTRAINT pk_valuenumentity PRIMARY KEY (data_id)
 );
 
@@ -212,7 +187,7 @@ CREATE TABLE value_str_entity
     value   VARCHAR(255) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NULL,
-    is_deleted BIT(1) NULL,
+    deleted BIT(1) NULL,
     CONSTRAINT pk_valuestrentity PRIMARY KEY (data_id)
 );
 
@@ -222,7 +197,7 @@ CREATE TABLE value_text_entity
     value   TEXT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NULL,
-    is_deleted BIT(1) NULL,
+    deleted BIT(1) NULL,
     CONSTRAINT pk_valuetextentity PRIMARY KEY (data_id)
 );
 
@@ -259,14 +234,8 @@ ALTER TABLE located_objects
 ALTER TABLE located_objects
     ADD CONSTRAINT FK_LOCATED_OBJECTS_ON_GROUND FOREIGN KEY (ground_id) REFERENCES grounds (ground_id);
 
-ALTER TABLE object_formula_parameters
-    ADD CONSTRAINT FK_OBJECT_FORMULA_PARAMETERS_ON_OBJECT_FORMAT FOREIGN KEY (object_format_id) REFERENCES object_formats (object_format_id);
-
-ALTER TABLE object_formula_parameter_values
-    ADD CONSTRAINT FK_OBJECT_FORMULA_PARAMETER_VALUES_ON_LOCATED_OBJECT FOREIGN KEY (located_object_id) REFERENCES located_objects (located_object_id);
-
-ALTER TABLE object_formula_parameter_values
-    ADD CONSTRAINT FK_OBJECT_FORMULA_PARAMETER_VALUES_ON_OBJECT_FORMULA_PARAMETER FOREIGN KEY (object_formula_parameter_id) REFERENCES object_formula_parameters (object_formula_parameters_id);
+ALTER TABLE located_objects
+    ADD CONSTRAINT FK_LOCATED_OBJECTS_ON_OBJECT_FORMAT FOREIGN KEY (object_format_id) REFERENCES object_formats (object_format_id);
 
 ALTER TABLE post_explosions
     ADD CONSTRAINT FK_POST_EXPLOSIONS_ON_USER FOREIGN KEY (user_id) REFERENCES users (user_id);

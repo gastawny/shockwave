@@ -1,5 +1,6 @@
 package com.gastawny.shockwave.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,15 +17,16 @@ public class BombThreat extends BaseModel {
     @Column(name = "bomb_threat_id")
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "form_threat_id")
     private FormThreat formThreat;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "located_object_id")
     private LocatedObject locatedObject;
 
@@ -33,6 +35,7 @@ public class BombThreat extends BaseModel {
             name = "bomb_threat_archive",
             joinColumns = {@JoinColumn(name = "bomb_threat_id")}, inverseJoinColumns = {@JoinColumn(name = "archive_id")}
     )
+    @JsonIgnore
     private List<Archive> archives;
 
     @Column
@@ -40,9 +43,6 @@ public class BombThreat extends BaseModel {
 
     @Column(name = "form_threat_description")
     private String formThreatDescription;
-
-    @Column(name = "is_located_object")
-    private Boolean isLocatedObject;
 
     @Column(name = "object_not_found_description")
     private String objectNotFoundDescription;

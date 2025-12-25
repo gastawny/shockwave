@@ -3,6 +3,9 @@ package com.gastawny.shockwave.models;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+
+import java.util.Map;
 
 @Entity(name = "grounds")
 @Getter

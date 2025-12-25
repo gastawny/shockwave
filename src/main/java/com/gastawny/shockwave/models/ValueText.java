@@ -12,9 +12,4 @@ public class ValueText extends Value {
     private String value;
 
     public ValueText() { }
-
-    public ValueText(Long valueId, String value) {
-        super(valueId);
-        this.value = value;
-    }
 }
