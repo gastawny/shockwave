@@ -84,62 +84,6 @@ public class BombThreatReport {
                     TextSpan.of(lo.getObjectFormat().getName())
             ));
 
-            if (lo.getLatitude() != null && lo.getLongitude() != null) {
-                String mapUrl;
-                List<CircleConfig> circles = new ArrayList<>(List.of());
-
-                try {
-                    for (var entry : formulasValues) {
-                        var circle = entry.getValue().getFormula().getCircle();
-
-                        if(circle == null) {
-                            continue;
-                        }
-
-                        circles.add(new CircleConfig()
-                                .setCenter(new GeoLocation(lo.getLatitude(), lo.getLongitude()))
-                                .setRadius(entry.getValue().getResult())
-                                .setFillColor(circle.getColor())
-                                .setStrokeColor(circle.getColor())
-                        );
-                    }
-
-                    pdf.addText("Imagem do mapa padrão: ", new TextStyle().bold());
-                    mapUrl = GoogleMapGenerator.generateMapUrl(
-                            lo.getLatitude(),
-                            lo.getLongitude(),
-                            0,
-                            "600x280",
-                            "roadmap",
-                            circles
-                    );
-
-                    pdf.addImage(mapUrl, new ImageStyle().scale(86));
-
-                    pdf.addText("Imagem do mapa via satélite:", new TextStyle().bold());
-                    mapUrl = GoogleMapGenerator.generateMapUrl(
-                            lo.getLatitude(),
-                            lo.getLongitude(),
-                            0,
-                            "600x280",
-                            "satellite",
-                            circles
-                    );
-
-                    pdf.addImage(mapUrl, new ImageStyle().scale(86));
-
-                    pdf.addInlineText(List.of(
-                            TextSpan.of("Coordenadas: ", new TextStyle().bold()),
-                            TextSpan.of(lo.getLatitude() + ", " + lo.getLongitude())
-                    ));
-                } catch (Exception e) {
-                    pdf.addInlineText(List.of(
-                            TextSpan.of("Mapa não disponível: ", new TextStyle().bold()),
-                            TextSpan.of(e.getMessage())
-                    ));
-                }
-            }
-
             pdf.addText("Dados Formato do Objeto", new TextStyle().italic().fontSize(14));
 
             for(var values : lo.getObjectFormatParameterValues()) {
@@ -170,6 +114,10 @@ public class BombThreatReport {
                 ));
             }
 
+            pdf.addSeparator();
+
+            setMapImages(lo, formulasValues);
+
         } else {
             pdf.addText("Nenhum Objeto Localizado associado a esta Ameaça de Bomba", new TextStyle().bold().fontSize(18));
 
@@ -180,6 +128,64 @@ public class BombThreatReport {
         }
 
         pdf.finish();
+    }
+
+    private void setMapImages(LocatedObject lo, List<Map.Entry<String, FormulaResult>> formulasValues) {
+        if (lo.getLatitude() != null && lo.getLongitude() != null) {
+            String mapUrl;
+            List<CircleConfig> circles = new ArrayList<>(List.of());
+
+            try {
+                for (var entry : formulasValues) {
+                    var circle = entry.getValue().getFormula().getCircle();
+
+                    if(circle == null) {
+                        continue;
+                    }
+
+                    circles.add(new CircleConfig()
+                            .setCenter(new GeoLocation(lo.getLatitude(), lo.getLongitude()))
+                            .setRadius(entry.getValue().getResult())
+                            .setFillColor(circle.getColor())
+                            .setStrokeColor(circle.getColor())
+                    );
+                }
+
+                pdf.addText("Mapas: ", new TextStyle().bold());
+                mapUrl = GoogleMapGenerator.generateMapUrl(
+                        lo.getLatitude(),
+                        lo.getLongitude(),
+                        0,
+                        "600x280",
+                        "roadmap",
+                        circles
+                );
+
+                pdf.addImage(mapUrl, new ImageStyle().scale(86));
+
+                pdf.addText("Imagem do mapa via satélite:", new TextStyle().bold());
+                mapUrl = GoogleMapGenerator.generateMapUrl(
+                        lo.getLatitude(),
+                        lo.getLongitude(),
+                        0,
+                        "600x280",
+                        "satellite",
+                        circles
+                );
+
+                pdf.addImage(mapUrl, new ImageStyle().scale(86));
+
+                pdf.addInlineText(List.of(
+                        TextSpan.of("Coordenadas: ", new TextStyle().bold()),
+                        TextSpan.of(lo.getLatitude() + ", " + lo.getLongitude())
+                ));
+            } catch (Exception e) {
+                pdf.addInlineText(List.of(
+                        TextSpan.of("Mapa não disponível: ", new TextStyle().bold()),
+                        TextSpan.of(e.getMessage())
+                ));
+            }
+        }
     }
 
     private List<Map.Entry<String, FormulaResult>> resolveFormulas(LocatedObject locatedObject) {
