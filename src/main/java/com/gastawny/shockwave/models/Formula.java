@@ -57,4 +57,7 @@ public class Formula extends BaseModel{
 
     @OneToOne(mappedBy = "formula", orphanRemoval = true)
     private FormulaDecision decision;
+
+    @OneToOne(mappedBy = "formula", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private FormulaCircle circle;
 }

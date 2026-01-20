@@ -186,10 +186,24 @@ public class ITextPdfExporter implements PdfExporter {
     @Override
     public void addImage(String imageResource, ImageStyle style) throws IOException {
         try {
-            Image img = Image.getInstance(
-                    Paths.get(ClassLoader.getSystemResource(imageResource).toURI())
-                            .toString()
-            );
+            Image img;
+            if (imageResource == null || imageResource.isBlank()) {
+                return;
+            }
+
+            // support passing a remote URL, a classpath resource name, or a filesystem path
+            if (imageResource.startsWith("http://") || imageResource.startsWith("https://")) {
+                img = Image.getInstance(java.net.URI.create(imageResource).toURL());
+            } else {
+                java.net.URL resourceUrl = ClassLoader.getSystemResource(imageResource);
+                if (resourceUrl != null) {
+                    img = Image.getInstance(Paths.get(resourceUrl.toURI()).toString());
+                } else {
+                    // fallback to file system path (absolute or relative)
+                    img = Image.getInstance(imageResource);
+                }
+            }
+
             applyImageStyle(img, style);
             document.add(img);
         } catch (Exception e) {

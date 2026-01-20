@@ -1,17 +1,23 @@
 package com.gastawny.shockwave.reports;
 
+import com.gastawny.shockwave.dto.formula.FormulaResult;
 import com.gastawny.shockwave.models.LocatedObject;
 import com.gastawny.shockwave.repositories.BombThreatRepository;
 import com.gastawny.shockwave.services.FormulaService;
+import com.gastawny.shockwave.shared.exports.maps.CircleConfig;
+import com.gastawny.shockwave.shared.exports.maps.GeoLocation;
+import com.gastawny.shockwave.shared.exports.maps.GoogleMapGenerator;
 import com.gastawny.shockwave.shared.exports.pdfs.PdfExporter;
 import com.gastawny.shockwave.shared.exports.pdfs.PdfExporterFactory;
 import com.gastawny.shockwave.shared.exports.pdfs.PdfExporterType;
+import com.gastawny.shockwave.shared.exports.pdfs.styles.ImageStyle;
 import com.gastawny.shockwave.shared.exports.pdfs.styles.TextSpan;
 import com.gastawny.shockwave.shared.exports.pdfs.styles.TextStyle;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +60,8 @@ public class BombThreatReport {
         pdf.addSeparator();
 
         if (lo != null) {
+            var formulasValues = resolveFormulas(lo);
+
             pdf.addText("Dados Objeto Localizado", new TextStyle().bold().fontSize(18));
 
             pdf.addInlineText(List.of(
@@ -76,6 +84,62 @@ public class BombThreatReport {
                     TextSpan.of(lo.getObjectFormat().getName())
             ));
 
+            if (lo.getLatitude() != null && lo.getLongitude() != null) {
+                String mapUrl;
+                List<CircleConfig> circles = new ArrayList<>(List.of());
+
+                try {
+                    for (var entry : formulasValues) {
+                        var circle = entry.getValue().getFormula().getCircle();
+
+                        if(circle == null) {
+                            continue;
+                        }
+
+                        circles.add(new CircleConfig()
+                                .setCenter(new GeoLocation(lo.getLatitude(), lo.getLongitude()))
+                                .setRadius(entry.getValue().getResult())
+                                .setFillColor(circle.getColor())
+                                .setStrokeColor(circle.getColor())
+                        );
+                    }
+
+                    pdf.addText("Imagem do mapa padrão: ", new TextStyle().bold());
+                    mapUrl = GoogleMapGenerator.generateMapUrl(
+                            lo.getLatitude(),
+                            lo.getLongitude(),
+                            0,
+                            "600x280",
+                            "roadmap",
+                            circles
+                    );
+
+                    pdf.addImage(mapUrl, new ImageStyle().scale(86));
+
+                    pdf.addText("Imagem do mapa via satélite:", new TextStyle().bold());
+                    mapUrl = GoogleMapGenerator.generateMapUrl(
+                            lo.getLatitude(),
+                            lo.getLongitude(),
+                            0,
+                            "600x280",
+                            "satellite",
+                            circles
+                    );
+
+                    pdf.addImage(mapUrl, new ImageStyle().scale(86));
+
+                    pdf.addInlineText(List.of(
+                            TextSpan.of("Coordenadas: ", new TextStyle().bold()),
+                            TextSpan.of(lo.getLatitude() + ", " + lo.getLongitude())
+                    ));
+                } catch (Exception e) {
+                    pdf.addInlineText(List.of(
+                            TextSpan.of("Mapa não disponível: ", new TextStyle().bold()),
+                            TextSpan.of(e.getMessage())
+                    ));
+                }
+            }
+
             pdf.addText("Dados Formato do Objeto", new TextStyle().italic().fontSize(14));
 
             for(var values : lo.getObjectFormatParameterValues()) {
@@ -89,12 +153,20 @@ public class BombThreatReport {
 
             pdf.addText("Fórmulas Calculadas", new TextStyle().bold().fontSize(18));
 
-            var formulasValues = resolveFormulas(lo);
-
             for (var entry : formulasValues) {
+                var result = entry.getValue().getResult();
+
+                if (result == null) {
+                    pdf.addInlineText(List.of(
+                            TextSpan.of(entry.getKey() + ": ", new TextStyle().bold()),
+                            TextSpan.of("Erro ao calcular a fórmula")
+                    ));
+                    continue;
+                }
+
                 pdf.addInlineText(List.of(
                         TextSpan.of(entry.getKey() + ": ", new TextStyle().bold()),
-                        TextSpan.of(entry.getValue())
+                        TextSpan.of(result.toString())
                 ));
             }
 
@@ -110,22 +182,21 @@ public class BombThreatReport {
         pdf.finish();
     }
 
-    private List<Map.Entry<String, String>> resolveFormulas(LocatedObject locatedObject) {
+    private List<Map.Entry<String, FormulaResult>> resolveFormulas(LocatedObject locatedObject) {
         var valuesParameters = formulaService.getParameterValues(Map.of(
                 "locatedObjectId", locatedObject.getId().toString()
         ));
 
         var formulas = formulaService.get2Report(valuesParameters);
-//        formulas = formulas.stream().filter(f -> f.getId() < 25L).toList();
 
         return formulas
                 .stream()
                 .map(formula -> {
                     try {
                         Double result = formulaService.execute(formula, valuesParameters);
-                        return Map.entry(formula.getName(), result.toString());
+                        return Map.entry(formula.getName(), new FormulaResult(formula, result));
                     } catch (Throwable t) {
-                        return Map.entry(formula.getId().toString(), "ERROR: " + t.getMessage());
+                        return Map.entry(formula.getId().toString(), new FormulaResult(formula, null));
                     }
                 })
                 .toList();

@@ -124,8 +124,6 @@ public class FormulaService {
 
         expression = Calculation.runAll(expression);
 
-        System.out.println(expression);
-
         return new SpelExpressionParser()
                 .parseExpression(expression)
                 .getValue(type);
