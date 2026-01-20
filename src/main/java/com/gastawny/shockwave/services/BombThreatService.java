@@ -1,26 +1,30 @@
 package com.gastawny.shockwave.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gastawny.shockwave.dto.bombThreat.ReqBombThreatDTO;
-import com.gastawny.shockwave.handlers.Handler;
+import com.gastawny.shockwave.dto.bombThreat.BombThreatReportDTO;
+import com.gastawny.shockwave.models.ParameterDependency;
+import com.gastawny.shockwave.reports.BombThreatReport;
+import com.gastawny.shockwave.shared.handlers.Handler;
 import com.gastawny.shockwave.models.BombThreat;
-import com.gastawny.shockwave.models.LocatedObject;
 import com.gastawny.shockwave.repositories.BombThreatRepository;
-import com.gastawny.shockwave.repositories.FormThreatRepository;
-import com.gastawny.shockwave.repositories.LocatedObjectRepository;
-import com.gastawny.shockwave.repositories.UserRepository;
 import com.gastawny.shockwave.shared.GenericList;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class BombThreatService implements Handler<BombThreat> {
 
     private final BombThreatRepository bombThreatRepository;
+    private final BombThreatReport bombThreatReport;
 
-    public BombThreatService(BombThreatRepository bombThreatRepository) {
+    public BombThreatService(BombThreatRepository bombThreatRepository, BombThreatReport bombThreatReport) {
         this.bombThreatRepository = bombThreatRepository;
+        this.bombThreatReport = bombThreatReport;
     }
 
     @Override
@@ -35,7 +39,7 @@ public class BombThreatService implements Handler<BombThreat> {
 
     @Override
     public Object getService() {
-        return new BombThreatService(bombThreatRepository);
+        return new BombThreatService(bombThreatRepository, bombThreatReport);
     }
 
     @Override
@@ -69,5 +73,13 @@ public class BombThreatService implements Handler<BombThreat> {
     @Override
     public List<GenericList> find2Select() {
         return bombThreatRepository.findBy(GenericList.class);
+    }
+
+    public void getReportById(OutputStream outputStream, Long id) throws IOException {
+        bombThreatReport.getById(outputStream, id);
+    }
+
+    public List<BombThreatReportDTO> getReports() {
+        return bombThreatRepository.findBy();
     }
 }

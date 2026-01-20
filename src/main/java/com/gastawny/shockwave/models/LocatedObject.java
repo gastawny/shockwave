@@ -20,6 +20,12 @@ public class LocatedObject extends BaseModel {
     @Column
     private String name;
 
+    @Column
+    private Double latitude;
+
+    @Column
+    private Double longitude;
+
     @ManyToOne
     @JoinColumn(name = "explosive_id")
     private Explosive explosive;

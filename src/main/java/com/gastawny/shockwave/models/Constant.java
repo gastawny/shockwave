@@ -8,7 +8,7 @@ import lombok.Setter;
 @Entity(name = "constants")
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public class Constant extends BaseModel {
 
     @Id

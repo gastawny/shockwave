@@ -1,22 +1,22 @@
 package com.gastawny.shockwave.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gastawny.shockwave.dto.locatedObject.ReqLocatedObjectDTO;
-import com.gastawny.shockwave.handlers.Handler;
+import com.gastawny.shockwave.shared.handlers.Handler;
 import com.gastawny.shockwave.models.*;
 import com.gastawny.shockwave.repositories.*;
 import com.gastawny.shockwave.shared.GenericList;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class LocatedObjectService implements Handler<LocatedObject> {
 
     private final ExplosiveRepository explosiveRepository;
     private final GroundRepository groundRepository;
-    private final LocatedObjectRepository locatedObjectRepository;
+    private final LocatedObjectRepository  locatedObjectRepository;
     private final ObjectFormatParameterValueRepository objectFormatParameterValueRepository;
     private final ObjectFormatParameterRepository objectFormatParameterRepository;
 
@@ -91,5 +91,20 @@ public class LocatedObjectService implements Handler<LocatedObject> {
     @Override
     public List<GenericList> find2Select() {
         return locatedObjectRepository.findBy(GenericList.class);
+    }
+
+    public Map<String, String> getValues(Long locatedObjectId) {
+        var locatedObject = findById(locatedObjectId);
+        Map<String, String> values = new HashMap<>(Map.of());
+
+        values.put("tab_k", locatedObject.getGround().getId().toString());
+        values.put("dep_volume", locatedObject.getObjectFormat().getId().toString());
+        values.put("densidade", explosiveRepository.findValueByParameterSymbol("densidade", locatedObject.getExplosive().getId()).get("value").toString());
+        values.put("efeito_relativo_tnt", explosiveRepository.findValueByParameterSymbol("efeito_relativo_tnt", locatedObject.getExplosive().getId()).get("value").toString());
+
+        for (var paramValue : locatedObject.getObjectFormatParameterValues()) {
+            values.put(paramValue.getObjectFormatParameter().getParameter().getSymbol(), paramValue.getValue().getValue().toString());
+        }
+        return values;
     }
 }

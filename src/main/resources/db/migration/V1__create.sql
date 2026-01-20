@@ -23,43 +23,22 @@ CREATE TABLE bomb_threats
     form_threat_id               BIGINT NULL,
     located_object_id            BIGINT NULL,
     name                         VARCHAR(255) NULL,
-    form_threat_description      VARCHAR(255) NULL,
-    object_not_found_description VARCHAR(255) NULL,
+    form_threat_description      TEXT NULL,
+    object_not_found_description TEXT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NULL,
     deleted BIT(1) NULL,
     CONSTRAINT pk_bomb_threats PRIMARY KEY (bomb_threat_id)
 );
 
-CREATE TABLE data_types
+CREATE TABLE explosive_parameters
 (
-    data_type_id  BIGINT AUTO_INCREMENT NOT NULL,
-    name          VARCHAR(255) NULL,
-    `description` VARCHAR(255) NULL,
-    value_type    VARCHAR(255) NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP NULL,
-    deleted BIT(1) NULL,
-    CONSTRAINT pk_data_types PRIMARY KEY (data_type_id)
-);
-
-CREATE TABLE datas
-(
-    data_id           BIGINT AUTO_INCREMENT NOT NULL,
-    data_type_id      BIGINT NOT NULL,
-    located_object_id BIGINT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP NULL,
-    deleted BIT(1) NULL,
-    CONSTRAINT pk_datas PRIMARY KEY (data_id)
-);
-
-CREATE TABLE explosive_data_type
-(
-    sequence     TINYINT NOT NULL,
-    explosive_id BIGINT  NOT NULL,
-    data_type_id BIGINT  NOT NULL,
-    CONSTRAINT pk_explosive_data_type PRIMARY KEY (explosive_id, data_type_id)
+    explosive_parameter_id BIGINT AUTO_INCREMENT NOT NULL,
+    explosive_id           BIGINT                NULL,
+    parameter_id           BIGINT                NULL,
+    sequence               TINYINT               NOT NULL,
+    value_id               BIGINT                NULL,
+    CONSTRAINT pk_explosive_parameters PRIMARY KEY (explosive_parameter_id)
 );
 
 CREATE TABLE explosives
@@ -201,6 +180,19 @@ CREATE TABLE value_text_entity
     CONSTRAINT pk_valuetextentity PRIMARY KEY (data_id)
 );
 
+CREATE TABLE parameters
+(
+    parameter_id BIGINT AUTO_INCREMENT  NOT NULL,
+    deleted      BIT(1)                 NOT NULL,
+    created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at   TIMESTAMP NULL,
+    symbol       VARCHAR(50)            NULL,
+    name         VARCHAR(100)           NULL,
+    unit         VARCHAR(20)            NULL,
+    value_type   VARCHAR(20)            NULL,
+    CONSTRAINT pk_parameters PRIMARY KEY (parameter_id)
+);
+
 ALTER TABLE bomb_threats
     ADD CONSTRAINT uc_bomb_threats_located_object UNIQUE (located_object_id);
 
@@ -216,17 +208,14 @@ ALTER TABLE bomb_threats
 ALTER TABLE bomb_threats
     ADD CONSTRAINT FK_BOMB_THREATS_ON_USER FOREIGN KEY (user_id) REFERENCES users (user_id);
 
-ALTER TABLE datas
-    ADD CONSTRAINT FK_DATAS_ON_DATA_TYPE FOREIGN KEY (data_type_id) REFERENCES data_types (data_type_id);
+ALTER TABLE explosive_parameters
+    ADD CONSTRAINT uc_explosive_parameters_value UNIQUE (value_id);
 
-ALTER TABLE datas
-    ADD CONSTRAINT FK_DATAS_ON_LOCATED_OBJECT FOREIGN KEY (located_object_id) REFERENCES located_objects (located_object_id);
+ALTER TABLE explosive_parameters
+    ADD CONSTRAINT FK_EXPLOSIVE_PARAMETERS_ON_EXPLOSIVE FOREIGN KEY (explosive_id) REFERENCES explosives (explosive_id);
 
-ALTER TABLE explosive_data_type
-    ADD CONSTRAINT FK_EXPLOSIVE_DATA_TYPE_ON_DATA_TYPE FOREIGN KEY (data_type_id) REFERENCES data_types (data_type_id);
-
-ALTER TABLE explosive_data_type
-    ADD CONSTRAINT FK_EXPLOSIVE_DATA_TYPE_ON_EXPLOSIVE FOREIGN KEY (explosive_id) REFERENCES explosives (explosive_id);
+ALTER TABLE explosive_parameters
+    ADD CONSTRAINT FK_EXPLOSIVE_PARAMETERS_ON_PARAMETER FOREIGN KEY (parameter_id) REFERENCES parameters (parameter_id);
 
 ALTER TABLE located_objects
     ADD CONSTRAINT FK_LOCATED_OBJECTS_ON_EXPLOSIVE FOREIGN KEY (explosive_id) REFERENCES explosives (explosive_id);
@@ -239,18 +228,6 @@ ALTER TABLE located_objects
 
 ALTER TABLE post_explosions
     ADD CONSTRAINT FK_POST_EXPLOSIONS_ON_USER FOREIGN KEY (user_id) REFERENCES users (user_id);
-
-ALTER TABLE value_entity
-    ADD CONSTRAINT FK_VALUEENTITY_ON_DATA FOREIGN KEY (data_id) REFERENCES datas (data_id);
-
-ALTER TABLE value_num_entity
-    ADD CONSTRAINT FK_VALUENUMENTITY_ON_DATAID FOREIGN KEY (data_id) REFERENCES value_entity (data_id);
-
-ALTER TABLE value_str_entity
-    ADD CONSTRAINT FK_VALUESTRENTITY_ON_DATAID FOREIGN KEY (data_id) REFERENCES value_entity (data_id);
-
-ALTER TABLE value_text_entity
-    ADD CONSTRAINT FK_VALUETEXTENTITY_ON_DATAID FOREIGN KEY (data_id) REFERENCES value_entity (data_id);
 
 ALTER TABLE bomb_threat_archive
     ADD CONSTRAINT fk_bomthrarc_on_archive_entity FOREIGN KEY (archive_id) REFERENCES archives (archive_id);
@@ -269,3 +246,9 @@ ALTER TABLE user_permission
 
 ALTER TABLE user_permission
     ADD CONSTRAINT fk_useper_on_user_entity FOREIGN KEY (user_id) REFERENCES users (user_id);
+
+ALTER TABLE parameters
+    ADD CONSTRAINT uc_parameters_name UNIQUE (name);
+
+ALTER TABLE parameters
+    ADD CONSTRAINT uc_parameters_symbol UNIQUE (symbol);

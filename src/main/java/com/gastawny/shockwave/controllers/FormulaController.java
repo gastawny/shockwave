@@ -5,11 +5,9 @@ import com.gastawny.shockwave.models.Formula;
 import com.gastawny.shockwave.services.FormulaService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Tag(name = "Formulas Endpoint")
@@ -28,13 +26,13 @@ public class FormulaController {
         return ResponseEntity.ok(formulaService.getFormulaById(id));
     }
 
-    @GetMapping(path = "/executable/{id}")
-    public ResponseEntity<Double> getExecutableExpressionById(@PathVariable Long id) {
-        return ResponseEntity.ok(formulaService.getExecutableExpressionById(id));
+    @GetMapping(path = "/execute/{id}")
+    public ResponseEntity<Double> getExecutableExpressionById(@PathVariable Long id, @RequestParam Map<String, String> params) {
+        return ResponseEntity.ok(formulaService.execute(params, id));
     }
 
     @GetMapping(path = "/expanded/{id}")
-    public ResponseEntity<FormulaExpandedDTO> getFormulaExpanded(@PathVariable Long id) {
-        return ResponseEntity.ok(formulaService.getFormulaExpanded(id));
+    public ResponseEntity<FormulaExpandedDTO> getFormulaExpanded(@PathVariable Long id, @RequestParam Map<String, String> params) {
+        return ResponseEntity.ok(formulaService.getFormulaExpanded(id, params));
     }
 }

@@ -4,8 +4,8 @@ import java.util.Set;
 
 public enum ValueType {
 
-    STRING("STR"),
-    NUMBER("NUM"),
+    STRING("STRING"),
+    NUMBER("NUMBER"),
     TEXT("TEXT");
 
     private final String value;
@@ -37,5 +37,4 @@ public enum ValueType {
 
         return null;
     }
-
 }

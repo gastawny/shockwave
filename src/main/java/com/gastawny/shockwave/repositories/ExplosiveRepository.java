@@ -8,17 +8,29 @@ import java.util.Map;
 
 public interface ExplosiveRepository extends BaseRepository<Explosive, Long> {
 
-    @Query(value = "SELECT d.data_id, d.data_type_id, dt.value_type, dt.name,\n" +
+    @Query(value = "SELECT ep.explosive_parameter_id, p.value_type, p.name,\n" +
             "    CASE\n" +
-            "        WHEN dt.value_type = 'STR' THEN (SELECT v.value FROM value_str v WHERE v.value_id = d.value_id)\n" +
-            "        WHEN dt.value_type = 'NUM' THEN (SELECT v.value FROM value_num v WHERE v.value_id = d.value_id)\n" +
-            "        WHEN dt.value_type = 'TEXT' THEN (SELECT v.value FROM value_text v WHERE v.value_id = d.value_id)\n" +
+            "        WHEN p.value_type = 'STRING' THEN (SELECT v.value FROM value_str v WHERE v.value_id = ep.value_id)\n" +
+            "        WHEN p.value_type = 'NUMBER' THEN (SELECT v.value FROM value_num v WHERE v.value_id = ep.value_id)\n" +
+            "        WHEN p.value_type = 'TEXT' THEN (SELECT v.value FROM value_text v WHERE v.value_id = ep.value_id)\n" +
             "    END AS value\n" +
             "    FROM explosives e\n" +
-            "    JOIN explosive_data_type edt ON e.explosive_id = edt.explosive_id\n" +
-            "    JOIN data_types dt ON dt.data_type_id = edt.data_type_id AND dt.deleted = (0)\n" +
-            "    JOIN datas d ON d.data_type_id = dt.data_type_id AND d.explosive_id = e.explosive_id AND d.deleted = false\n" +
+            "    JOIN explosive_parameters ep ON e.explosive_id = ep.explosive_id\n" +
+            "    JOIN parameters p ON p.parameter_id = ep.parameter_id\n" +
             "    WHERE e.explosive_id = ?1 AND e.deleted = false\n" +
-            "ORDER BY edt.sequence", nativeQuery = true)
+            "ORDER BY ep.sequence", nativeQuery = true)
     List<Map<String, Object>> findDataByExplosiveId(Long id);
+
+    @Query(value = "SELECT \n" +
+            "    CASE\n" +
+            "        WHEN p.value_type = 'STRING' THEN (SELECT v.value FROM value_str v WHERE v.value_id = ep.value_id)\n" +
+            "        WHEN p.value_type = 'NUMBER' THEN (SELECT v.value FROM value_num v WHERE v.value_id = ep.value_id)\n" +
+            "        WHEN p.value_type = 'TEXT' THEN (SELECT v.value FROM value_text v WHERE v.value_id = ep.value_id)\n" +
+            "    END AS value\n" +
+            "    FROM explosives e\n" +
+            "    JOIN explosive_parameters ep ON e.explosive_id = ep.explosive_id\n" +
+            "    JOIN parameters p ON p.parameter_id = ep.parameter_id\n" +
+            "    WHERE p.symbol = ?1 AND e.explosive_id = ?2 AND e.deleted = false\n" +
+            "LIMIT 1", nativeQuery = true)
+    Map<String, Object> findValueByParameterSymbol(String symbol, Long explosiveId);
 }

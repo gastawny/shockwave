@@ -6,23 +6,31 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "formula_compositions")
+@Table(
+        name = "formula_compositions",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_main_component_formula",
+                        columnNames = {"main_formula_id", "component_formula_id"}
+                )
+        }
+)
 @Getter
 @Setter
 public class FormulaComposition {
 
-    @EmbeddedId
-    private FormulaCompositionId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "formula_composition_id")
+    private Long id;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("mainFormulaId")
-    @JoinColumn(name = "main_formula_id", referencedColumnName = "formula_id")
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "main_formula_id", referencedColumnName = "formula_id", nullable = false)
     private Formula mainFormula;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @MapsId("componentFormulaId")
-    @JoinColumn(name = "component_formula_id", referencedColumnName = "formula_id")
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "component_formula_id", referencedColumnName = "formula_id", nullable = false)
     private Formula componentFormula;
 
     @Column(length = 50, nullable = false)

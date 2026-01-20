@@ -1,6 +1,6 @@
 package com.gastawny.shockwave.services;
 
-import com.gastawny.shockwave.handlers.Handler;
+import com.gastawny.shockwave.shared.handlers.Handler;
 import com.gastawny.shockwave.models.Ground;
 import com.gastawny.shockwave.repositories.GroundRepository;
 import com.gastawny.shockwave.shared.GenericList;
