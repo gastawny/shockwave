@@ -193,9 +193,6 @@ CREATE TABLE parameters
     CONSTRAINT pk_parameters PRIMARY KEY (parameter_id)
 );
 
-ALTER TABLE bomb_threats
-    ADD CONSTRAINT uc_bomb_threats_located_object UNIQUE (located_object_id);
-
 ALTER TABLE users
     ADD CONSTRAINT uc_users_user_name UNIQUE (user_name);
 

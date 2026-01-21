@@ -53,7 +53,8 @@ public class HandlerController {
     public ResponseEntity<?> save(@RequestBody HandlerReq req) throws BadRequestException {
         Handler<?> handler = handlerFactory.getHandler(req.getType());
 
-        var obj = (new ObjectMapper()).convertValue(req.getData(), Object.class);
+        Class<?> clazz = handler.getEntityClass();
+        Object obj = new ObjectMapper().convertValue(req.getData(), clazz);
 
         return ResponseEntity.ok(((Handler<Object>) handler).save(obj));
     }
