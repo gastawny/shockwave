@@ -6,11 +6,13 @@ import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity(name = "parameters")
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
+@ToString
 public class Parameter extends BaseModel {
 
     @Id
@@ -38,5 +40,5 @@ public class Parameter extends BaseModel {
 
     @JsonIgnore
     @Column(length = 50)
-    private String table;
+    private String tableName;
 }

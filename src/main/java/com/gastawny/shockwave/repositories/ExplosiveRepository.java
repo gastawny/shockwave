@@ -17,8 +17,7 @@ public interface ExplosiveRepository extends BaseRepository<Explosive, Long> {
             "    FROM explosives e\n" +
             "    JOIN explosive_parameters ep ON e.explosive_id = ep.explosive_id\n" +
             "    JOIN parameters p ON p.parameter_id = ep.parameter_id\n" +
-            "    WHERE e.explosive_id = ?1 AND e.deleted = false\n" +
-            "ORDER BY ep.sequence", nativeQuery = true)
+            "    WHERE e.explosive_id = ?1 AND e.deleted = false\n", nativeQuery = true)
     List<Map<String, Object>> findDataByExplosiveId(Long id);
 
     @Query(value = "SELECT \n" +
