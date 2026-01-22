@@ -36,15 +36,15 @@ public class AuthController {
     }
 
     @Operation(summary = "Refresh token for authenticated user and returns a new token")
-    @PutMapping(value = "/refresh/{username}")
+    @PutMapping(value = "/refresh/{id}")
     public ResponseEntity<?> refreshToken(
-            @PathVariable("username") String username,
+            @PathVariable("id") Long id,
             @RequestHeader("Authorization") String refreshToken
     ) {
-        if (checkIfParamsNotNull(username, refreshToken))
+        if (checkIfParamsNotNull(id, refreshToken))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid client request");
 
-        var token = authServices.refreshToken(username, refreshToken);
+        var token = authServices.refreshToken(id, refreshToken);
 
         if (token == null)
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid client request");
@@ -58,12 +58,12 @@ public class AuthController {
         return authServices.signUp(data);
     }
 
-    private static boolean checkIfParamsNotNull(String username, String refreshToken) {
-        return refreshToken == null || refreshToken.isBlank() || username == null || username.isBlank();
+    private static boolean checkIfParamsNotNull(Long id, String refreshToken) {
+        return refreshToken == null || refreshToken.isBlank() || id == null;
     }
 
     private boolean checkIfParamsNotNull(AccountCredentialsDTO data) {
-        return data == null || data.getUsername() == null || data.getUsername().isBlank()
+        return data == null || data.getEmail() == null || data.getEmail().isBlank()
                 || data.getPassword() == null || data.getPassword().isBlank();
     }
 }

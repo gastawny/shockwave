@@ -5,11 +5,13 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.gastawny.shockwave.dto.TokenDTO;
+import com.gastawny.shockwave.repositories.UserRepository;
 import com.gastawny.shockwave.shared.exceptions.InvalidJwtAuthenticationException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,9 +32,12 @@ public class JwtTokenProvider {
     private long validityInMilliseconds = 3600000;
 
     @Autowired
+    @Lazy
     private UserDetailsService userDetailsService;
 
     Algorithm algorithm = null;
+    @Autowired
+    private UserRepository userRepository;
 
     @PostConstruct
     protected void init() {
@@ -40,12 +45,15 @@ public class JwtTokenProvider {
         algorithm = Algorithm.HMAC256(secretKey.getBytes());
     }
 
-    public TokenDTO createAccessToken(String username, List<String> roles) {
+    public TokenDTO createAccessToken(String email, List<String> roles) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
-        var accessToken = getAccessToken(username, roles, now, validity);
-        var refreshToken = getRefreshToken(username, roles, now);
-        return new TokenDTO(username, true, now, validity, accessToken, refreshToken);
+        var accessToken = getAccessToken(email, roles, now, validity);
+        var refreshToken = getRefreshToken(email, roles, now);
+
+        var user = userRepository.findByEmail(email).orElseThrow(() -> new InvalidJwtAuthenticationException("User not found"));
+
+        return new TokenDTO(user, true, now, validity, accessToken, refreshToken);
     }
 
     private String getAccessToken(String username, List<String> roles, Date now, Date validity) {
@@ -69,21 +77,21 @@ public class JwtTokenProvider {
 
         DecodedJWT decodedJwt = verifier.verify(refreshToken);
 
-        String username = decodedJwt.getSubject();
+        String email = decodedJwt.getSubject();
 
         List<String> roles = decodedJwt.getClaim("roles").asList(String.class);
 
-        return createAccessToken(username, roles);
+        return createAccessToken(email, roles);
     }
 
-    private String getRefreshToken(String username, List<String> roles, Date now) {
-        Date validity = new Date(now.getTime() + (validityInMilliseconds * 3));
+    private String getRefreshToken(String email, List<String> roles, Date now) {
+        Date validity = new Date(now.getTime() + (validityInMilliseconds));
 
         return JWT.create()
                 .withClaim("roles", roles)
                 .withIssuedAt(now)
                 .withExpiresAt(validity)
-                .withSubject(username)
+                .withSubject(email)
                 .sign(algorithm)
                 .strip();
     }

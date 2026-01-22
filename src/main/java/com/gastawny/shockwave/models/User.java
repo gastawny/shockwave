@@ -1,5 +1,6 @@
 package com.gastawny.shockwave.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,23 +22,36 @@ public class User implements UserDetails {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(name = "user_name", unique = true)
-    private String userName;
+    @Column(length = 50)
+    private String firstName;
 
+    @Column(length = 50)
+    private String lastName;
+
+    @Column(unique = true, length = 100)
+    private String email;
+
+    @JsonIgnore
     @Column
     private String password;
 
+    @JsonIgnore
     @Column(name = "account_non_expired")
-    private boolean accountNonExpired;
+    private boolean accountNonExpired = true;
+
     @Column(name = "account_non_locked")
-    private boolean accountNonLocked;
+    @JsonIgnore
+    private boolean accountNonLocked = true;
 
+    @JsonIgnore
     @Column(name = "credentials_non_expired")
-    private boolean credentialsNonExpired;
+    private boolean credentialsNonExpired = true;
 
+    @JsonIgnore
     @Column
-    private boolean enabled;
+    private boolean enabled = true;
 
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_permission",
@@ -47,8 +61,8 @@ public class User implements UserDetails {
 
     public User() { }
 
-    public User(String userName, String password) {
-        this.userName = userName;
+    public User(String email, String password) {
+        this.email = email;
         this.password = password;
     }
 
@@ -61,6 +75,7 @@ public class User implements UserDetails {
         return roles;
     }
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.permissions;
@@ -71,9 +86,10 @@ public class User implements UserDetails {
         return this.password;
     }
 
+    @JsonIgnore
     @Override
     public String getUsername() {
-        return this.userName;
+        return this.email;
     }
 
     @Override

@@ -30,45 +30,35 @@ public class AuthService {
 
     public ResponseEntity<TokenDTO> signIn(AccountCredentialsDTO data) {
         try {
-            var username = data.getUsername();
+            var email = data.getEmail();
             var password = data.getPassword();
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
 
-            var user = repository.findByUserName(username);
+            var user = repository.findByEmail(email).orElseThrow(
+                    () -> new UsernameNotFoundException("Email " + email + " not found")
+            );
 
-            var tokenResponse = new TokenDTO();
-
-            if (user == null) throw new UsernameNotFoundException("Username " + username + " not found");
-
-            tokenResponse = tokenProvider.createAccessToken(username, user.getRoles());
-
-            return ResponseEntity.ok(tokenResponse);
+            return ResponseEntity.ok(tokenProvider.createAccessToken(user.getEmail(), user.getRoles()));
         } catch (Exception e) {
-            throw new BadCredentialsException("Invalid username/password supplied");
+            throw new BadCredentialsException("Invalid email/password supplied");
         }
     }
 
-    public ResponseEntity<TokenDTO> refreshToken(String username, String refreshToken) {
-        var user = repository.findByUserName(username);
+    public ResponseEntity<TokenDTO> refreshToken(Long id, String refreshToken) {
+        var user = repository.findById(id);
 
-        var tokenResponse = new TokenDTO();
+        if (user.isEmpty()) throw new UsernameNotFoundException("Id " + id + " not found");
 
-        if (user == null) throw new UsernameNotFoundException("Username " + username + " not found");
-
-        tokenResponse = tokenProvider.refreshToken(refreshToken);
-
-        return ResponseEntity.ok(tokenResponse);
+        return ResponseEntity.ok(tokenProvider.refreshToken(refreshToken));
     }
 
     public ResponseEntity<TokenDTO> signUp(AccountCredentialsDTO data) {
-        var user = repository.findByUserName(data.getUsername());
-
-        if (user != null) {
-            return ResponseEntity.badRequest().body(null);
-        }
+        var user = repository.findByEmail(data.getEmail()).orElseThrow(
+                () -> new UsernameNotFoundException("Email " + data.getEmail() + " not found")
+        );
 
         var newUser = repository.save(new User(
-                data.getUsername(),
+                data.getEmail(),
                 data.getPassword()
         ));
 

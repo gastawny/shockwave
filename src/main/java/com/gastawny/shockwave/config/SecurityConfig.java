@@ -2,7 +2,6 @@ package com.gastawny.shockwave.config;
 
 import com.gastawny.shockwave.security.jwt.JwtTokenFilter;
 import com.gastawny.shockwave.security.jwt.JwtTokenProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,9 +19,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
 
-    @Bean
-    public JwtTokenProvider jwtTokenProvider() {
-        return new JwtTokenProvider();
+    private final JwtTokenProvider jwtTokenProvider;
+
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Bean
@@ -36,8 +36,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        JwtTokenFilter customFilter = new JwtTokenFilter(jwtTokenProvider());
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        JwtTokenFilter customFilter = new JwtTokenFilter(jwtTokenProvider);
 
         return http
                 .httpBasic(AbstractHttpConfigurer::disable)
@@ -46,21 +46,17 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
                         authorizedRequests -> authorizedRequests
-//                                .requestMatchers(
-//                                        "/auth/signIn",
-//                                        "/auth/signUp",
-//                                        "/auth/refreshToken/**",
-//                                        "/api-docs/**",
-//                                        "swagger-ui/**",
-//                                        "v3/api-docs/**"
-//                                ).permitAll()
-//                                .requestMatchers("/api/**").permitAll()
-//                                .requestMatchers("/users").hasAnyAuthority("ADMIN")
-//                                .anyRequest().authenticated()
-                                .anyRequest().permitAll()
+                                .requestMatchers(
+                                        "/auth/signin",
+                                        "/auth/refresh/**",
+                                        "/api-docs/**",
+                                        "swagger-ui/**",
+                                        "v3/api-docs/**"
+                                ).permitAll()
+                                .requestMatchers("/users").denyAll()
+                                .anyRequest().authenticated()
                 )
-                .cors(cors -> {
-                })
+                .cors(cors -> {})
                 .build();
 
     }

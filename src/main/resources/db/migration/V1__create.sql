@@ -132,7 +132,9 @@ CREATE TABLE user_permission
 CREATE TABLE users
 (
     user_id                 BIGINT AUTO_INCREMENT NOT NULL,
-    user_name               VARCHAR(255) NULL,
+    email                   VARCHAR(100) NULL,
+    first_name              VARCHAR(50) NULL,
+    last_name               VARCHAR(50) NULL,
     password                VARCHAR(255) NULL,
     account_non_expired     BIT(1) NULL,
     account_non_locked      BIT(1) NULL,
@@ -194,7 +196,7 @@ CREATE TABLE parameters
 );
 
 ALTER TABLE users
-    ADD CONSTRAINT uc_users_user_name UNIQUE (user_name);
+    ADD CONSTRAINT uc_users_email UNIQUE (email);
 
 ALTER TABLE bomb_threats
     ADD CONSTRAINT FK_BOMB_THREATS_ON_FORM_THREAT FOREIGN KEY (form_threat_id) REFERENCES form_threats (form_threat_id);

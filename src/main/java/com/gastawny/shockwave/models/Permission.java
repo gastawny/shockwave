@@ -3,11 +3,13 @@ package com.gastawny.shockwave.models;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 
 @Entity(name = "permissions")
 @Getter
 @Setter
+@ToString
 public class Permission extends BaseModel implements GrantedAuthority {
 
     @Id
