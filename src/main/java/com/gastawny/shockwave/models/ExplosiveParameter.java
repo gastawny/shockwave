@@ -23,9 +23,6 @@ public class ExplosiveParameter {
     @JoinColumn(name = "parameter_id")
     private Parameter parameter;
 
-    @Column(name = "sequence", nullable = false)
-    private Byte sequence;
-
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "value_id")
     private Value value;

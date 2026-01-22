@@ -44,7 +44,7 @@ public class BombThreatService implements Handler<BombThreat> {
 
     @Override
     public List<BombThreat> findAll() {
-        return List.of();
+        return  bombThreatRepository.findAll();
     }
 
     @Override
@@ -53,7 +53,7 @@ public class BombThreatService implements Handler<BombThreat> {
     }
 
     @Override
-    public BombThreat save(Object entity) {
+    public BombThreat save(Map<String, Object> entity) {
         ObjectMapper mapper = new ObjectMapper();
         BombThreat bombThreat = mapper.convertValue(entity, BombThreat.class);
 
@@ -61,13 +61,15 @@ public class BombThreatService implements Handler<BombThreat> {
     }
 
     @Override
-    public BombThreat update(BombThreat entity) {
-        return bombThreatRepository.save(entity);
+    public BombThreat update(Map<String, Object> entity) {
+        ObjectMapper mapper = new ObjectMapper();
+        BombThreat bt = mapper.convertValue(entity, BombThreat.class);
+        return bombThreatRepository.save(bt);
     }
 
     @Override
     public void deleteById(Long id) {
-
+        bombThreatRepository.deleteById(id);
     }
 
     @Override

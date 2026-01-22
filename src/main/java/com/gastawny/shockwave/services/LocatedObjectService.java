@@ -60,7 +60,7 @@ public class LocatedObjectService implements Handler<LocatedObject> {
     }
 
     @Override
-    public LocatedObject save(Object entity) {
+    public LocatedObject save(Map<String, Object> entity) {
         ObjectMapper mapper = new ObjectMapper();
         LocatedObject locatedObject = mapper.convertValue(entity, LocatedObject.class);
 
@@ -74,13 +74,15 @@ public class LocatedObjectService implements Handler<LocatedObject> {
 
 
     @Override
-    public LocatedObject update(LocatedObject entity) {
-        entity.getObjectFormatParameterValues()
+    public LocatedObject update(Map<String, Object> entity) {
+        ObjectMapper mapper = new ObjectMapper();
+        LocatedObject lo = mapper.convertValue(entity, LocatedObject.class);
+        lo.getObjectFormatParameterValues()
                 .stream()
                 .toList()
-                .forEach(entity::addObjectFormatParameterValue);
+                .forEach(lo::addObjectFormatParameterValue);
 
-        return locatedObjectRepository.save(entity);
+        return locatedObjectRepository.save(lo);
     }
 
     @Override

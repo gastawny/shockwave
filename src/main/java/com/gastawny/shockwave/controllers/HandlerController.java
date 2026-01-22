@@ -1,6 +1,5 @@
 package com.gastawny.shockwave.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gastawny.shockwave.shared.ShockwaveResponse;
 import com.gastawny.shockwave.shared.exceptions.BadRequestException;
 import com.gastawny.shockwave.shared.handlers.Handler;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 @Tag(name = "Handlers Endpoint")
 @RestController
@@ -53,20 +53,14 @@ public class HandlerController {
     public ResponseEntity<?> save(@RequestBody HandlerReq req) throws BadRequestException {
         Handler<?> handler = handlerFactory.getHandler(req.getType());
 
-        Class<?> clazz = handler.getEntityClass();
-        Object obj = new ObjectMapper().convertValue(req.getData(), clazz);
-
-        return ResponseEntity.ok(((Handler<Object>) handler).save(obj));
+        return ResponseEntity.ok(((Handler<Object>) handler).save((Map<String, Object>) req.getData()));
     }
 
     @PutMapping
     public ResponseEntity<?> update(@RequestBody HandlerReq req) throws BadRequestException {
         Handler<?> handler = handlerFactory.getHandler(req.getType());
-        Class<?> clazz = handler.getEntityClass();
 
-        Object obj = new ObjectMapper().convertValue(req.getData(), clazz);
-
-        return ResponseEntity.ok(((Handler<Object>) handler).update(obj));
+        return ResponseEntity.ok(((Handler<Object>) handler).update((Map<String, Object>) req.getData()));
     }
 
     @DeleteMapping("/{type}/{id}")

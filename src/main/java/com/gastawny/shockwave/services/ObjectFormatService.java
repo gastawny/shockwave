@@ -7,6 +7,9 @@ import com.gastawny.shockwave.shared.GenericList;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class ObjectFormatService implements Handler<ObjectFormat> {
@@ -39,22 +42,25 @@ public class ObjectFormatService implements Handler<ObjectFormat> {
 
     @Override
     public ObjectFormat findById(Long id) {
-        return null;
+        return objectFormatRepository.findById(id).orElse(null);
     }
 
     @Override
-    public ObjectFormat save(Object entity) {
-        return null;
+    public ObjectFormat save(Map<String, Object> entity) {
+        ObjectMapper mapper = new ObjectMapper();
+        return objectFormatRepository.save(mapper.convertValue(entity, ObjectFormat.class));
     }
 
     @Override
-    public ObjectFormat update(ObjectFormat entity) {
-        return null;
+    public ObjectFormat update(Map<String, Object> entity) {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectFormat of = mapper.convertValue(entity, ObjectFormat.class);
+        return objectFormatRepository.save(of);
     }
 
     @Override
     public void deleteById(Long id) {
-
+        objectFormatRepository.deleteById(id);
     }
 
     @Override

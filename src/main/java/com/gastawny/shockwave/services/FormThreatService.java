@@ -7,6 +7,9 @@ import com.gastawny.shockwave.shared.GenericList;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class FormThreatService implements Handler<FormThreat> {
@@ -39,22 +42,25 @@ public class FormThreatService implements Handler<FormThreat> {
 
     @Override
     public FormThreat findById(Long id) {
-        return null;
+        return formThreatRepository.findById(id).orElse(null);
     }
 
     @Override
-    public FormThreat save(Object entity) {
-        return null;
+    public FormThreat save(Map<String, Object> entity) {
+        ObjectMapper mapper = new ObjectMapper();
+        return formThreatRepository.save(mapper.convertValue(entity, FormThreat.class));
     }
 
     @Override
-    public FormThreat update(FormThreat entity) {
-        return null;
+    public FormThreat update(Map<String, Object> entity) {
+        ObjectMapper mapper = new ObjectMapper();
+        FormThreat ft = mapper.convertValue(entity, FormThreat.class);
+        return formThreatRepository.save(ft);
     }
 
     @Override
     public void deleteById(Long id) {
-
+        formThreatRepository.deleteById(id);
     }
 
     @Override

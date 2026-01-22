@@ -35,4 +35,8 @@ public class Parameter extends BaseModel {
     @JsonIgnore
     @OneToOne(mappedBy = "parameter", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private ParameterDependency dependency;
+
+    @JsonIgnore
+    @Column(length = 50)
+    private String table;
 }

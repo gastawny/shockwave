@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ObjectFormatParameterService implements Handler<ObjectFormatParameter> {
@@ -44,12 +45,12 @@ public class ObjectFormatParameterService implements Handler<ObjectFormatParamet
     }
 
     @Override
-    public ObjectFormatParameter save(Object entity) {
+    public ObjectFormatParameter save(Map<String, Object> entity) {
         return null;
     }
 
     @Override
-    public ObjectFormatParameter update(ObjectFormatParameter entity) {
+    public ObjectFormatParameter update(Map<String, Object> entity) {
         return null;
     }
 

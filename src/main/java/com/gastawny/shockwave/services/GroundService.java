@@ -7,6 +7,9 @@ import com.gastawny.shockwave.shared.GenericList;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class GroundService implements Handler<Ground> {
@@ -42,13 +45,16 @@ public class GroundService implements Handler<Ground> {
     }
 
     @Override
-    public Ground save(Object ground) {
-        return groundRepository.save((Ground) ground);
+    public Ground save(Map<String, Object> entity) {
+        ObjectMapper mapper = new ObjectMapper();
+        return groundRepository.save(mapper.convertValue(entity, Ground.class));
     }
 
     @Override
-    public Ground update(Ground ground) {
-        return groundRepository.save(ground);
+    public Ground update(Map<String, Object> entity) {
+        ObjectMapper mapper = new ObjectMapper();
+        Ground g = mapper.convertValue(entity, Ground.class);
+        return groundRepository.save(g);
     }
 
     @Override

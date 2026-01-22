@@ -6,6 +6,7 @@ import com.gastawny.shockwave.repositories.ExplosiveRepository;
 import com.gastawny.shockwave.shared.GenericList;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,12 +45,12 @@ public class ExplosiveService implements Handler<Explosive> {
     }
 
     @Override
-    public Explosive save(Object entity) {
+    public Explosive save(Map<String, Object> entity) {
         return null;
     }
 
     @Override
-    public Explosive update(Explosive entity) {
+    public Explosive update(Map<String, Object> entity) {
         return null;
     }
 
@@ -63,7 +64,11 @@ public class ExplosiveService implements Handler<Explosive> {
         return explosiveRepository.findBy(GenericList.class);
     }
 
-    public List<Map<String, Object>> getDataByExplosiveId(Long id) {
+    public List<Map<String, Object>> getDataByExplosiveId(LinkedHashMap<String, Object> req) {
+        Long id = Long.valueOf(req.get("id").toString());
+
+        System.out.println(id);
+
         return (List<Map<String, Object>>) explosiveRepository.findDataByExplosiveId(id);
     }
 }
