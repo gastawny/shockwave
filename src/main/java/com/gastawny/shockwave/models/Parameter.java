@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 @Entity(name = "parameters")
 @Getter
 @Setter
@@ -29,7 +31,6 @@ public class Parameter extends BaseModel {
     @Column(length = 20)
     private String unit;
 
-    @JsonIgnore
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
     private ValueType valueType;
@@ -41,4 +42,8 @@ public class Parameter extends BaseModel {
     @JsonIgnore
     @Column(length = 50)
     private String tableName;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "parameter", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ExplosiveParameter> explosiveParameters;
 }

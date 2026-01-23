@@ -7,6 +7,7 @@ UPDATE parameters SET table_name='explosives' WHERE parameter_id=12;
 UPDATE parameters SET table_name='explosives' WHERE parameter_id=13;
 UPDATE parameters SET table_name='explosives' WHERE parameter_id=14;
 UPDATE parameters SET table_name='explosives' WHERE parameter_id=15;
+UPDATE parameters SET table_name='explosives' WHERE parameter_id=16;
 UPDATE parameters SET table_name='explosives' WHERE parameter_id=17;
 UPDATE parameters SET table_name='explosives' WHERE parameter_id=18;
 UPDATE parameters SET table_name='explosives' WHERE parameter_id=19;

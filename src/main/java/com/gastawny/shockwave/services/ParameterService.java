@@ -1,7 +1,6 @@
 package com.gastawny.shockwave.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gastawny.shockwave.models.Ground;
 import com.gastawny.shockwave.models.Parameter;
 import com.gastawny.shockwave.models.ParameterDependency;
 import com.gastawny.shockwave.repositories.MetadataRepository;
@@ -98,6 +97,6 @@ public class ParameterService implements Handler<Parameter> {
     public List<Parameter> getTableParameters(LinkedHashMap<String, Object> req) {
         String table = (String) req.get("tableName");
 
-        return parameterRepository.findByTableNameLike(table);
+        return parameterRepository.findByTableName(table);
     }
 }

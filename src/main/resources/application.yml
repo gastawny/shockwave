@@ -6,7 +6,7 @@ security:
   jwt:
     token:
       secret-key: {SECRET_KEY:ds1fg6G4}
-      expire-length: 3600000
+      expire-length: 7200000
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver

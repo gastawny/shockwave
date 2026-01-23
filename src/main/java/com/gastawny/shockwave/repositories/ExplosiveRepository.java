@@ -8,7 +8,7 @@ import java.util.Map;
 
 public interface ExplosiveRepository extends BaseRepository<Explosive, Long> {
 
-    @Query(value = "SELECT ep.explosive_parameter_id, p.value_type, p.name,\n" +
+    @Query(value = "SELECT ep.explosive_parameter_id, p.value_type, p.name, p.parameter_id,\n" +
             "    CASE\n" +
             "        WHEN p.value_type = 'STRING' THEN (SELECT v.value FROM value_str v WHERE v.value_id = ep.value_id)\n" +
             "        WHEN p.value_type = 'NUMBER' THEN (SELECT v.value FROM value_num v WHERE v.value_id = ep.value_id)\n" +
@@ -32,4 +32,7 @@ public interface ExplosiveRepository extends BaseRepository<Explosive, Long> {
             "    WHERE p.symbol = ?1 AND e.explosive_id = ?2 AND e.deleted = false\n" +
             "LIMIT 1", nativeQuery = true)
     Map<String, Object> findValueByParameterSymbol(String symbol, Long explosiveId);
+
+    @Query("SELECT e FROM explosives e LEFT JOIN FETCH e.explosiveParameters WHERE e.id = :id")
+    Explosive findByIdWithParameters(Long id);
 }

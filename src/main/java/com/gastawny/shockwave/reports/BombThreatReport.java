@@ -60,64 +60,7 @@ public class BombThreatReport {
         pdf.addSeparator();
 
         if (lo != null) {
-            var formulasValues = resolveFormulas(lo);
-
-            pdf.addText("Dados Objeto Localizado", new TextStyle().bold().fontSize(18));
-
-            pdf.addInlineText(List.of(
-                    TextSpan.of("Identificação: ", new TextStyle().bold()),
-                    TextSpan.of(lo.getName())
-            ));
-
-            pdf.addInlineText(List.of(
-                    TextSpan.of("Tipo de Explosivo: ", new TextStyle().bold()),
-                    TextSpan.of(lo.getExplosive().getName())
-            ));
-
-            pdf.addInlineText(List.of(
-                    TextSpan.of("Tipo de Solo: ", new TextStyle().bold()),
-                    TextSpan.of(lo.getGround().getName())
-            ));
-
-            pdf.addInlineText(List.of(
-                    TextSpan.of("Formato do Objeto: ", new TextStyle().bold()),
-                    TextSpan.of(lo.getObjectFormat().getName())
-            ));
-
-            pdf.addText("Dados Formato do Objeto", new TextStyle().italic().fontSize(14));
-
-            for(var values : lo.getObjectFormatParameterValues()) {
-                pdf.addInlineText(List.of(
-                        TextSpan.of(values.getObjectFormatParameter().getParameter().getName() + ": ", new TextStyle().bold()),
-                        TextSpan.of(values.getValue().getValue().toString())
-                ));
-            }
-
-            pdf.addSeparator();
-
-            pdf.addText("Fórmulas Calculadas", new TextStyle().bold().fontSize(18));
-
-            for (var entry : formulasValues) {
-                var result = entry.getValue().getResult();
-
-                if (result == null) {
-                    pdf.addInlineText(List.of(
-                            TextSpan.of(entry.getKey() + ": ", new TextStyle().bold()),
-                            TextSpan.of("Erro ao calcular a fórmula")
-                    ));
-                    continue;
-                }
-
-                pdf.addInlineText(List.of(
-                        TextSpan.of(entry.getKey() + ": ", new TextStyle().bold()),
-                        TextSpan.of(result.toString())
-                ));
-            }
-
-            pdf.addSeparator();
-
-            setMapImages(lo, formulasValues);
-
+            getLocatedObjectReport(lo);
         } else {
             pdf.addText("Nenhum Objeto Localizado associado a esta Ameaça de Bomba", new TextStyle().bold().fontSize(18));
 
@@ -128,6 +71,66 @@ public class BombThreatReport {
         }
 
         pdf.finish();
+    }
+
+    private void getLocatedObjectReport(LocatedObject lo) {
+        var formulasValues = resolveFormulas(lo);
+
+        pdf.addText("Dados Objeto Localizado", new TextStyle().bold().fontSize(18));
+
+        pdf.addInlineText(List.of(
+                TextSpan.of("Identificação: ", new TextStyle().bold()),
+                TextSpan.of(lo.getName())
+        ));
+
+        pdf.addInlineText(List.of(
+                TextSpan.of("Tipo de Explosivo: ", new TextStyle().bold()),
+                TextSpan.of(lo.getExplosive().getName())
+        ));
+
+        pdf.addInlineText(List.of(
+                TextSpan.of("Tipo de Solo: ", new TextStyle().bold()),
+                TextSpan.of(lo.getGround().getName())
+        ));
+
+        pdf.addInlineText(List.of(
+                TextSpan.of("Formato do Objeto: ", new TextStyle().bold()),
+                TextSpan.of(lo.getObjectFormat().getName())
+        ));
+
+        pdf.addText("Dados Formato do Objeto", new TextStyle().italic().fontSize(14));
+
+//        for(var values : lo.getObjectFormatParameterValues()) {
+//            pdf.addInlineText(List.of(
+//                    TextSpan.of(values.getObjectFormatParameter().getParameter().getName() + ": ", new TextStyle().bold()),
+//                    TextSpan.of(values.getValue().getValue().toString())
+//            ));
+//        }
+
+        pdf.addSeparator();
+
+        pdf.addText("Fórmulas Calculadas", new TextStyle().bold().fontSize(18));
+
+        for (var entry : formulasValues) {
+            var result = entry.getValue().getResult();
+
+            if (result == null) {
+                pdf.addInlineText(List.of(
+                        TextSpan.of(entry.getKey() + ": ", new TextStyle().bold()),
+                        TextSpan.of("Erro ao calcular a fórmula")
+                ));
+                continue;
+            }
+
+            pdf.addInlineText(List.of(
+                    TextSpan.of(entry.getKey() + ": ", new TextStyle().bold()),
+                    TextSpan.of(result.toString())
+            ));
+        }
+
+        pdf.addSeparator();
+
+        setMapImages(lo, formulasValues);
     }
 
     private void setMapImages(LocatedObject lo, List<Map.Entry<String, FormulaResult>> formulasValues) {

@@ -17,6 +17,6 @@ INSERT INTO parameters(parameter_id, name, symbol, unit, value_type) VALUES
     (14, 'Sensibilidade ao choque', 'sensibilidade_choque', 'cm', 'NUMBER'),
     (15, 'Sensibilidade ao calor', 'sensibilidade_calor', '°C', 'NUMBER'),
     (16, 'Produção de gases', 'producao_gases', 'L/Kg', 'NUMBER'),
-    (17, 'Produção de gases tóxicos (Balanço de oxigênio em %)', 'producao_gases_toxicos', NULL, NULL),
-    (18, 'Resistência a água', 'resistencia_agua', NULL, NULL),
-    (19, 'Características físicas', 'caracteristicas_fisicas', NULL, NULL);
+    (17, 'Produção de gases tóxicos (Balanço de oxigênio em %)', 'producao_gases_toxicos', NULL, 'STRING'),
+    (18, 'Resistência a água', 'resistencia_agua', NULL, 'STRING'),
+    (19, 'Características físicas', 'caracteristicas_fisicas', NULL, 'STRING');
