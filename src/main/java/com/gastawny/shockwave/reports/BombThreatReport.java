@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,8 @@ public class BombThreatReport {
     public void getById(OutputStream outputStream, Long id) throws IOException {
         var bombThreat = bombThreatRepository.findById(id).orElseThrow();
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
         pdf.start(outputStream);
 
         var lo = bombThreat.getLocatedObject();
@@ -45,6 +48,11 @@ public class BombThreatReport {
         pdf.addInlineText(List.of(
                 TextSpan.of("Identificação: ", new TextStyle().bold()),
                 TextSpan.of(bombThreat.getName())
+        ));
+
+        pdf.addInlineText(List.of(
+                TextSpan.of("Data da ocorrência: ", new TextStyle().bold()),
+                TextSpan.of(bombThreat.getCreatedAt().format(formatter))
         ));
 
         pdf.addInlineText(List.of(
@@ -100,12 +108,12 @@ public class BombThreatReport {
 
         pdf.addText("Dados Formato do Objeto", new TextStyle().italic().fontSize(14));
 
-//        for(var values : lo.getObjectFormatParameterValues()) {
-//            pdf.addInlineText(List.of(
-//                    TextSpan.of(values.getObjectFormatParameter().getParameter().getName() + ": ", new TextStyle().bold()),
-//                    TextSpan.of(values.getValue().getValue().toString())
-//            ));
-//        }
+        for(var values : lo.getObjectFormatParameterValues()) {
+            pdf.addInlineText(List.of(
+                    TextSpan.of(values.getObjectFormatParameter().getParameter().getName() + ": ", new TextStyle().bold()),
+                    TextSpan.of(values.getValue().getValue().toString())
+            ));
+        }
 
         pdf.addSeparator();
 

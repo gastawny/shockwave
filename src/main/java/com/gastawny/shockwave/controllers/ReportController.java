@@ -2,6 +2,7 @@ package com.gastawny.shockwave.controllers;
 
 import com.gastawny.shockwave.dto.bombThreat.BombThreatReportDTO;
 import com.gastawny.shockwave.services.BombThreatService;
+import com.gastawny.shockwave.services.ExplosiveService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +20,11 @@ import java.util.List;
 public class ReportController {
 
     private final BombThreatService bombThreatService;
+    private final ExplosiveService explosiveService;
 
-    public ReportController(BombThreatService bombThreatService) {
+    public ReportController(BombThreatService bombThreatService, ExplosiveService explosiveService) {
         this.bombThreatService = bombThreatService;
+        this.explosiveService = explosiveService;
     }
 
     @GetMapping(path = "bombThreats/{id}")
@@ -38,5 +41,16 @@ public class ReportController {
     @GetMapping(path = "bombThreats")
     public ResponseEntity<List<BombThreatReportDTO>> getBombThreatReports() {
         return ResponseEntity.ok(bombThreatService.getReports());
+    }
+
+    @GetMapping(path = "explosives")
+    public void ExplosiveById(HttpServletResponse response) throws IOException {
+        response.setContentType("application/pdf");
+        response.setHeader(
+                "Content-Disposition",
+                "attachment; filename=ameaca_bomba.pdf"
+        );
+
+        explosiveService.getReportById(response.getOutputStream());
     }
 }

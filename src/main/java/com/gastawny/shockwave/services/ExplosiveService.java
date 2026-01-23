@@ -1,22 +1,28 @@
 package com.gastawny.shockwave.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gastawny.shockwave.dto.bombThreat.BombThreatReportDTO;
 import com.gastawny.shockwave.dto.explosive.ExplosiveDataDTO;
 import com.gastawny.shockwave.models.*;
+import com.gastawny.shockwave.reports.ExplosiveReport;
 import com.gastawny.shockwave.repositories.ExplosiveRepository;
 import com.gastawny.shockwave.shared.GenericList;
 import com.gastawny.shockwave.shared.enums.ValueType;
 import com.gastawny.shockwave.shared.handlers.Handler;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.*;
 
 @Service
 public class ExplosiveService implements Handler<Explosive> {
 
     private final ExplosiveRepository explosiveRepository;
+    private final ExplosiveReport explosiveReport;
 
-    public ExplosiveService(ExplosiveRepository explosiveRepository) {
+    public ExplosiveService(ExplosiveRepository explosiveRepository, ExplosiveReport formulaReport) {
+        this.explosiveReport = formulaReport;
         this.explosiveRepository = explosiveRepository;
     }
 
@@ -32,7 +38,7 @@ public class ExplosiveService implements Handler<Explosive> {
 
     @Override
     public Object getService() {
-        return new ExplosiveService(explosiveRepository);
+        return new ExplosiveService(explosiveRepository, explosiveReport);
     }
 
     @Override
@@ -188,5 +194,9 @@ public class ExplosiveService implements Handler<Explosive> {
         } catch (NumberFormatException e) {
             return null;
         }
+    }
+
+    public void getReportById(OutputStream outputStream) throws IOException {
+        explosiveReport.getById(outputStream);
     }
 }
