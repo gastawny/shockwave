@@ -61,7 +61,6 @@ public class LocatedObjectService implements Handler<LocatedObject> {
 
     @Override
     public LocatedObject save(Map<String, Object> entity) {
-        // Garantir que cada "value" tenha o tipo necessário para desserialização polimórfica
         ensureValueTypes(entity);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -78,7 +77,6 @@ public class LocatedObjectService implements Handler<LocatedObject> {
 
     @Override
     public LocatedObject update(Map<String, Object> entity) {
-        // Garantir que cada "value" tenha o tipo necessário para desserialização polimórfica
         ensureValueTypes(entity);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -116,10 +114,7 @@ public class LocatedObjectService implements Handler<LocatedObject> {
         return values;
     }
 
-    /**
-     * Normaliza cada entry de objectFormatParameterValues adicionando o campo "type"
-     * quando ausente e garantindo que o valor numérico esteja em "val" (esperado por ValueNum).
-     */
+
     @SuppressWarnings("unchecked")
     private void ensureValueTypes(Map<String, Object> entity) {
         if (entity == null) return;
@@ -134,7 +129,6 @@ public class LocatedObjectService implements Handler<LocatedObject> {
             Object valueObj = itemMap.get("value");
 
             if (valueObj == null) {
-                // também checar se já existe um objeto "val"/"raw" diretamente
                 Object existingVal = itemMap.get("val");
                 if (existingVal == null) existingVal = itemMap.get("raw");
                 if (existingVal != null && !itemMap.containsKey("type")) {
@@ -146,33 +140,25 @@ public class LocatedObjectService implements Handler<LocatedObject> {
             if (valueObj instanceof Map) {
                 Map<String, Object> valueMap = (Map<String, Object>) valueObj;
 
-                // se existir uma chave "value" aninhada, extrair o número dela
                 if (valueMap.containsKey("value")) {
                     Object nested = valueMap.get("value");
                     Object extracted = nested;
                     if (nested instanceof Map) {
                         Map<String, Object> nestedMap = (Map<String, Object>) nested;
-                        // caso { "value": { "value": 3 } } ou similar
                         if (nestedMap.containsKey("value")) {
                             extracted = nestedMap.get("value");
                         }
                     }
-                    // mover/normalizar para "val" se não existir
                     if (!valueMap.containsKey("val")) {
                         valueMap.put("val", extracted);
                     }
                     valueMap.remove("value");
                 }
 
-                // se por algum motivo o mapa ainda tem chave "value" em outro formato, tratar acima
                 if (!valueMap.containsKey("type")) {
                     valueMap.put("type", "number");
                 }
-
-                // Caso o itemMap tenha apenas "value" (map) e queremos que itemMap.value seja o objeto normalizado,
-                // já está normalizado in-place (valueMap foi alterado).
             } else {
-                // se for um número/valor primitivo (ex.: 3), converte para map com type + val
                 Map<String, Object> newValueMap = new HashMap<>();
                 newValueMap.put("type", "number");
                 newValueMap.put("val", valueObj);

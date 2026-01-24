@@ -1,6 +1,7 @@
 package com.gastawny.shockwave.reports;
 
 import com.gastawny.shockwave.dto.formula.FormulaResult;
+import com.gastawny.shockwave.models.BombThreat;
 import com.gastawny.shockwave.models.LocatedObject;
 import com.gastawny.shockwave.repositories.BombThreatRepository;
 import com.gastawny.shockwave.services.FormulaService;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -78,7 +80,37 @@ public class BombThreatReport {
             ));
         }
 
+        getGeneralImages(bombThreat);
+
         pdf.finish();
+    }
+
+    private void getGeneralImages(BombThreat bombThreat) {
+        if (bombThreat.getFiles() != null && !bombThreat.getFiles().isEmpty()) {
+            pdf.addSeparator();
+            pdf.addText("Anexos", new TextStyle().bold().fontSize(18));
+
+            ImageStyle style = new ImageStyle();
+
+            var files = bombThreat.getFiles();
+            for (var file : files) {
+                pdf.startRow(1);
+                try {
+                    if (file.getData() != null && file.getData().length > 0) {
+                        String base64 = Base64.getEncoder().encodeToString(file.getData());
+                        pdf.addRowCellWithImage("", new String[]{base64}, style);
+                    } else if (file.getPath() != null && !file.getPath().isBlank()) {
+                        pdf.addRowCellWithImage("", file.getPath(), style);
+                    } else {
+                        pdf.addRowCell("");
+                    }
+                } catch (IOException e) {
+                    pdf.addRowCell("");
+                }
+
+                pdf.endRow();
+            }
+        }
     }
 
     private void getLocatedObjectReport(LocatedObject lo) {
@@ -162,7 +194,13 @@ public class BombThreatReport {
                     );
                 }
 
-                pdf.addText("Mapas: ", new TextStyle().bold());
+                pdf.addText("Mapas", new TextStyle().bold());
+
+                pdf.addInlineText(List.of(
+                        TextSpan.of("Coordenadas: ", new TextStyle().bold()),
+                        TextSpan.of(lo.getLatitude() + ", " + lo.getLongitude())
+                ));
+
                 mapUrl = GoogleMapGenerator.generateMapUrl(
                         lo.getLatitude(),
                         lo.getLongitude(),
@@ -172,9 +210,10 @@ public class BombThreatReport {
                         circles
                 );
 
-                pdf.addImage(mapUrl, new ImageStyle().scale(86));
+                pdf.startRow(1);
+                pdf.addRowCellWithImage("", mapUrl, new ImageStyle().scale(86));
+                pdf.endRow();
 
-                pdf.addText("Imagem do mapa via satélite:", new TextStyle().bold());
                 mapUrl = GoogleMapGenerator.generateMapUrl(
                         lo.getLatitude(),
                         lo.getLongitude(),
@@ -184,12 +223,12 @@ public class BombThreatReport {
                         circles
                 );
 
-                pdf.addImage(mapUrl, new ImageStyle().scale(86));
+                pdf.startRow(1);
+                pdf.addRowCellWithImage("", mapUrl, new ImageStyle().scale(86));
+                pdf.endRow();
 
-                pdf.addInlineText(List.of(
-                        TextSpan.of("Coordenadas: ", new TextStyle().bold()),
-                        TextSpan.of(lo.getLatitude() + ", " + lo.getLongitude())
-                ));
+                pdf.addSeparator();
+
             } catch (Exception e) {
                 pdf.addInlineText(List.of(
                         TextSpan.of("Mapa não disponível: ", new TextStyle().bold()),

@@ -12,11 +12,9 @@ import java.util.jar.JarFile;
 
 public class Calculation {
 
-    // Cache found Classes to avoid repeated classpath scanning
     private static volatile List<Class<? extends Calculable>> processorClasses = null;
 
     public static String runAll(String input) {
-        // ensure classes are discovered once
         if (processorClasses == null) {
             synchronized (Calculation.class) {
                 if (processorClasses == null) {
@@ -30,8 +28,7 @@ public class Calculation {
                                 classes.add(c);
                             }
                         }
-                    } catch (IOException e) {
-                        // ignore resource scanning issues
+                    } catch (IOException _) {
                     }
                     processorClasses = Collections.unmodifiableList(classes);
                 }
@@ -39,13 +36,11 @@ public class Calculation {
         }
 
         String res = input;
-        // instantiate processors per run to avoid shared mutable state and allow thread-safety
         for (Class<? extends Calculable> procClass : processorClasses) {
             try {
                 Calculable inst = procClass.getDeclaredConstructor().newInstance();
                 res = inst.execute(res);
-            } catch (Throwable t) {
-                // ignore individual processor errors
+            } catch (Throwable _) {
             }
         }
 
@@ -71,8 +66,7 @@ public class Calculation {
                         findClassesInJar(path, jar, classes);
                     }
                 }
-            } catch (Exception ignored) {
-                // continue scanning other resources
+            } catch (Exception _) {
             }
         }
         return classes;

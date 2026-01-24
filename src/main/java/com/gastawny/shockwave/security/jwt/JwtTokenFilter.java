@@ -32,11 +32,10 @@ public class JwtTokenFilter extends GenericFilterBean {
                 }
             }
         } catch (Exception e) {
-            // Token expired or invalid, set 401 Unauthorized
             ((HttpServletResponse) res).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            ((HttpServletResponse) res).setContentType("application/json");
-            ((HttpServletResponse) res).getWriter().write("{\"error\": \"Token expired or invalid\"}");
-            return; // Stop further processing
+            res.setContentType("application/json");
+            res.getWriter().write("{\"error\": \"Token expired or invalid\"}");
+            return;
         }
 
         filterChain.doFilter(req, res);

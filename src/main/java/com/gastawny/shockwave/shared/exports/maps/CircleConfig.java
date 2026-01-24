@@ -3,11 +3,11 @@ package com.gastawny.shockwave.shared.exports.maps;
 public class CircleConfig {
 
     private GeoLocation center;
-    private double radius; // meters
+    private double radius;
     private String fillColor;
     private String strokeColor;
     private Integer strokeWeight;
-    private Double fillOpacity; // 0..1
+    private Double fillOpacity;
 
     public GeoLocation getCenter() {
         return center;

@@ -1,4 +1,4 @@
-ALTER TABLE archives
+ALTER TABLE files
     ALTER deleted SET DEFAULT (0);
 
 ALTER TABLE bomb_threats

@@ -7,13 +7,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Map;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "value_type", discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
 @NoArgsConstructor
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type", defaultImpl = ValueNum.class)
 @JsonSubTypes({
         @JsonSubTypes.Type(value = ValueStr.class, name = "string"),
         @JsonSubTypes.Type(value = ValueNum.class, name = "number"),
@@ -28,6 +30,14 @@ public abstract class Value {
 
     public abstract Object getValue();
 
-    // Set the underlying value without casting - subclasses implement this
     public abstract void setRaw(Object v);
+
+    public void setValue(Object v) {
+        if (v instanceof Map) {
+            Object inner = ((Map<?, ?>) v).get("value");
+            setRaw(inner);
+        } else {
+            setRaw(v);
+        }
+    }
 }

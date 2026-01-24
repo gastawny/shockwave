@@ -28,14 +28,17 @@ public interface PdfExporter {
 
     void addImage(String imageResource, ImageStyle style) throws IOException;
 
-    // Separator: horizontal line
+    void addImage(String[] imageBase64Chunks, ImageStyle style) throws IOException;
+
     void addSeparator();
 
-    // Simple row/grid API: start a row with N columns, add cells, then end the row
     void startRow(int columns);
     void addRowCell(String text);
     void addRowCell(String text, TextStyle style);
     void endRow();
+
+    void addRowCellWithImage(String caption, String imageResource, ImageStyle style) throws IOException;
+    void addRowCellWithImage(String caption, String[] imageBase64Chunks, ImageStyle style) throws IOException;
 
     void finish();
 }

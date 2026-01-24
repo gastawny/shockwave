@@ -14,6 +14,7 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.List;
 
 public class ITextPdfExporter implements PdfExporter {
@@ -21,11 +22,8 @@ public class ITextPdfExporter implements PdfExporter {
     private Document document;
     private PdfPTable currentTable;
 
-    // Row/grid support
     private PdfPTable currentRowTable;
-    // private int currentRowColumns = 0; // (we don't need to track columns count separately for now)
 
-    // Increased default paragraph spacing so elements are not "colados" unsafely
     private static final float DEFAULT_PARAGRAPH_SPACING_BEFORE = 6f;
     private static final float DEFAULT_PARAGRAPH_SPACING_AFTER = 4f;
 
@@ -48,13 +46,11 @@ public class ITextPdfExporter implements PdfExporter {
     @Override
     public void addText(String text, TextStyle style) {
         try {
-            // guard null text
             String safeText = text == null ? "" : text;
             Paragraph p = new Paragraph(safeText, resolveFont(style));
             if (style != null && style.getHorizontalAlignment() != null) {
                 p.setAlignment(style.getHorizontalAlignment());
             }
-            // espaçamento vertical padrão para separar elementos
             p.setSpacingBefore(DEFAULT_PARAGRAPH_SPACING_BEFORE);
             p.setSpacingAfter(DEFAULT_PARAGRAPH_SPACING_AFTER);
             document.add(p);
@@ -66,7 +62,6 @@ public class ITextPdfExporter implements PdfExporter {
     @Override
     public void addSeparator() {
         try {
-            // Use iText's LineSeparator to draw a horizontal line
             LineSeparator ls = new LineSeparator();
             ls.setOffset(0);
             document.add(new Chunk(ls));
@@ -77,13 +72,14 @@ public class ITextPdfExporter implements PdfExporter {
 
     @Override
     public void startRow(int columns) {
-        // initialize a table that will act as a row with given number of columns
         currentRowTable = new PdfPTable(columns);
-        // full width
         currentRowTable.setWidthPercentage(100);
-        // add vertical spacing between rows
         currentRowTable.setSpacingBefore(DEFAULT_PARAGRAPH_SPACING_BEFORE);
         currentRowTable.setSpacingAfter(DEFAULT_PARAGRAPH_SPACING_AFTER);
+        try {
+            currentRowTable.setSplitRows(true);
+            currentRowTable.setSplitLate(false);
+        } catch (Exception ignored) {}
     }
 
     @Override
@@ -96,17 +92,16 @@ public class ITextPdfExporter implements PdfExporter {
         if (currentRowTable == null) {
             throw new IllegalStateException("startRow(...) must be called before addRowCell(...)");
         }
-        // guard null text
         String safeText = text == null ? "" : text;
         PdfPCell cell = new PdfPCell(new Phrase(safeText, resolveFont(style)));
-        // apply text style alignment if present
+
         if (style != null && style.getHorizontalAlignment() != null) {
             cell.setHorizontalAlignment(style.getHorizontalAlignment());
         }
         if (style != null && style.getVerticalAlignment() != null) {
             cell.setVerticalAlignment(style.getVerticalAlignment());
         }
-        // remove default cell borders to make it look like plain columns unless user wants styling
+
         cell.setBorder(PdfPCell.NO_BORDER);
         currentRowTable.addCell(cell);
     }
@@ -120,7 +115,174 @@ public class ITextPdfExporter implements PdfExporter {
             throw new RuntimeException(e);
         }
         currentRowTable = null;
-        // currentRowColumns = 0;
+    }
+
+    @Override
+    public void addRowCellWithImage(String caption, String imageResource, ImageStyle style) throws IOException {
+        if (currentRowTable == null) {
+            throw new IllegalStateException("startRow(...) must be called before addRowCellWithImage(...)");
+        }
+
+        try {
+            if (imageResource == null || imageResource.isBlank()) {
+                PdfPCell empty = new PdfPCell(new Phrase(caption == null ? "" : caption, resolveFont(new TextStyle())));
+                empty.setBorder(PdfPCell.NO_BORDER);
+                currentRowTable.addCell(empty);
+                return;
+            }
+
+            Image img;
+
+                if (imageResource.startsWith("http://") || imageResource.startsWith("https://")) {
+                img = Image.getInstance(java.net.URI.create(imageResource).toURL());
+            } else {
+                java.net.URL resourceUrl = ClassLoader.getSystemResource(imageResource);
+                if (resourceUrl != null) {
+                    img = Image.getInstance(Paths.get(resourceUrl.toURI()).toString());
+                } else {
+                    img = Image.getInstance(imageResource);
+                }
+            }
+
+            applyImageStyle(img, style);
+
+            try {
+                int cols = currentRowTable.getNumberOfColumns();
+                float usableWidth = document.getPageSize().getWidth() - document.leftMargin() - document.rightMargin();
+                float columnWidth = usableWidth / Math.max(1, cols);
+                float usableHeight = document.getPageSize().getHeight() - document.topMargin() - document.bottomMargin();
+                float maxImgWidth = columnWidth - 2f;
+                float maxImgHeight = Math.max(usableHeight - 60f, 50f);
+                if (img.getScaledWidth() > maxImgWidth || img.getScaledHeight() > maxImgHeight) {
+                    img.scaleToFit(maxImgWidth, maxImgHeight);
+                }
+
+                if (img.getScaledHeight() > usableHeight - 20f) {
+                    PdfPTable single = new PdfPTable(1);
+                    single.setWidthPercentage(100);
+
+                    PdfPCell capCell = new PdfPCell(new Phrase(caption == null ? "" : caption, resolveFont(new TextStyle().bold())));
+                    capCell.setBorder(PdfPCell.NO_BORDER);
+                    capCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    capCell.setPaddingBottom(2f);
+                    single.addCell(capCell);
+
+                    PdfPCell imgCell = new PdfPCell();
+                    imgCell.setBorder(PdfPCell.NO_BORDER);
+                    imgCell.addElement(img);
+                    single.addCell(imgCell);
+
+                    try {
+                        document.add(single);
+                    } catch (DocumentException de) {
+                        throw new IOException(de);
+                    }
+
+                    currentRowTable = null;
+                    return;
+                }
+            } catch (Exception ignored) {}
+
+            PdfPCell cell = new PdfPCell();
+            cell.setBorder(PdfPCell.NO_BORDER);
+            cell.setPaddingTop(4f);
+            cell.setPaddingBottom(4f);
+            cell.setPaddingLeft(0f);
+            cell.setPaddingRight(0f);
+            Paragraph p = new Paragraph(caption == null ? "" : caption, resolveFont(new TextStyle().bold()));
+            p.setAlignment(Element.ALIGN_CENTER);
+            p.setSpacingAfter(2f);
+            cell.addElement(p);
+            cell.addElement(img);
+            currentRowTable.addCell(cell);
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
+    }
+
+    @Override
+    public void addRowCellWithImage(String caption, String[] imageBase64Chunks, ImageStyle style) throws IOException {
+        if (currentRowTable == null) {
+            throw new IllegalStateException("startRow(...) must be called before addRowCellWithImage(...)");
+        }
+
+        try {
+            if (imageBase64Chunks == null || imageBase64Chunks.length == 0) {
+                PdfPCell empty = new PdfPCell(new Phrase(caption == null ? "" : caption, resolveFont(new TextStyle())));
+                empty.setBorder(PdfPCell.NO_BORDER);
+                currentRowTable.addCell(empty);
+                return;
+            }
+
+            String joined = String.join("", imageBase64Chunks);
+            int commaIdx = joined.indexOf(",");
+            String base64Part = joined;
+            if (commaIdx >= 0) {
+                String prefix = joined.substring(0, commaIdx);
+                if (prefix.contains("base64")) {
+                    base64Part = joined.substring(commaIdx + 1);
+                }
+            }
+
+            byte[] bytes = Base64.getDecoder().decode(base64Part);
+            Image img = Image.getInstance(bytes);
+
+            applyImageStyle(img, style);
+
+            try {
+                int cols = currentRowTable.getNumberOfColumns();
+                float usableWidth = document.getPageSize().getWidth() - document.leftMargin() - document.rightMargin();
+                float columnWidth = usableWidth / Math.max(1, cols);
+                float usableHeight = document.getPageSize().getHeight() - document.topMargin() - document.bottomMargin();
+                float maxImgWidth = columnWidth - 2f;
+                float maxImgHeight = Math.max(usableHeight - 60f, 50f);
+                if (img.getScaledWidth() > maxImgWidth || img.getScaledHeight() > maxImgHeight) {
+                    img.scaleToFit(maxImgWidth, maxImgHeight);
+                }
+
+                if (img.getScaledHeight() > usableHeight - 20f) {
+                    PdfPTable single = new PdfPTable(1);
+                    single.setWidthPercentage(100);
+
+                    PdfPCell capCell = new PdfPCell(new Phrase(caption == null ? "" : caption, resolveFont(new TextStyle().bold())));
+                    capCell.setBorder(PdfPCell.NO_BORDER);
+                    capCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    capCell.setPaddingBottom(2f);
+                    single.addCell(capCell);
+
+                    PdfPCell imgCell = new PdfPCell();
+                    imgCell.setBorder(PdfPCell.NO_BORDER);
+                    imgCell.addElement(img);
+                    single.addCell(imgCell);
+
+                    try {
+                        document.add(single);
+                    } catch (DocumentException de) {
+                        throw new IOException(de);
+                    }
+
+                    currentRowTable = null;
+                    return;
+                }
+            } catch (Exception ignored) {}
+
+            PdfPCell cell = new PdfPCell();
+            cell.setBorder(PdfPCell.NO_BORDER);
+            cell.setPaddingTop(4f);
+            cell.setPaddingBottom(4f);
+            cell.setPaddingLeft(0f);
+            cell.setPaddingRight(0f);
+            Paragraph p = new Paragraph(caption == null ? "" : caption, resolveFont(new TextStyle().bold()));
+            p.setAlignment(Element.ALIGN_CENTER);
+            p.setSpacingAfter(2f);
+            cell.addElement(p);
+            cell.addElement(img);
+            currentRowTable.addCell(cell);
+        } catch (IllegalArgumentException iae) {
+            throw new IOException("Invalid Base64 image data", iae);
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
     }
 
     @Override
@@ -135,7 +297,6 @@ public class ITextPdfExporter implements PdfExporter {
                 paragraph.add(new Chunk(safeText, font));
             }
 
-            // since we already returned for null/empty, it's safe to read the first span
             TextStyle firstStyle = spans.get(0).getStyle();
             if (firstStyle != null && firstStyle.getHorizontalAlignment() != null) {
                 paragraph.setAlignment(firstStyle.getHorizontalAlignment());
@@ -191,7 +352,6 @@ public class ITextPdfExporter implements PdfExporter {
                 return;
             }
 
-            // support passing a remote URL, a classpath resource name, or a filesystem path
             if (imageResource.startsWith("http://") || imageResource.startsWith("https://")) {
                 img = Image.getInstance(java.net.URI.create(imageResource).toURL());
             } else {
@@ -199,13 +359,61 @@ public class ITextPdfExporter implements PdfExporter {
                 if (resourceUrl != null) {
                     img = Image.getInstance(Paths.get(resourceUrl.toURI()).toString());
                 } else {
-                    // fallback to file system path (absolute or relative)
                     img = Image.getInstance(imageResource);
                 }
             }
 
             applyImageStyle(img, style);
+
+            try {
+                float usableWidth = document.getPageSize().getWidth() - document.leftMargin() - document.rightMargin();
+                float usableHeight = document.getPageSize().getHeight() - document.topMargin() - document.bottomMargin();
+                float maxImgWidth = usableWidth - 2f;
+                float maxImgHeight = Math.max(usableHeight - 60f, 50f);
+                if (img.getScaledWidth() > maxImgWidth || img.getScaledHeight() > maxImgHeight) {
+                    img.scaleToFit(maxImgWidth, maxImgHeight);
+                }
+            } catch (Exception ignored) {}
+
             document.add(img);
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
+    }
+
+    @Override
+    public void addImage(String[] imageBase64Chunks, ImageStyle style) throws IOException {
+        try {
+            if (imageBase64Chunks == null || imageBase64Chunks.length == 0) return;
+
+            String joined = String.join("", imageBase64Chunks);
+            int commaIdx = joined.indexOf(",");
+            String base64Part = joined;
+            if (commaIdx >= 0) {
+                String prefix = joined.substring(0, commaIdx);
+                if (prefix.contains("base64")) {
+                    base64Part = joined.substring(commaIdx + 1);
+                }
+            }
+
+            byte[] bytes = Base64.getDecoder().decode(base64Part);
+            Image img = Image.getInstance(bytes);
+
+            applyImageStyle(img, style);
+
+            try {
+                float usableWidth = document.getPageSize().getWidth() - document.leftMargin() - document.rightMargin();
+                float usableHeight = document.getPageSize().getHeight() - document.topMargin() - document.bottomMargin();
+                float maxImgWidth = usableWidth - 2f;
+                float maxImgHeight = Math.max(usableHeight - 60f, 50f);
+                if (img.getScaledWidth() > maxImgWidth || img.getScaledHeight() > maxImgHeight) {
+                    img.scaleToFit(maxImgWidth, maxImgHeight);
+                }
+            } catch (Exception ignored) {}
+
+            document.add(img);
+        } catch (IllegalArgumentException iae) {
+            throw new IOException("Invalid Base64 image data", iae);
         } catch (Exception e) {
             throw new IOException(e);
         }
@@ -218,7 +426,6 @@ public class ITextPdfExporter implements PdfExporter {
                 document.add(currentTable);
                 currentTable = null;
             }
-            // if a row was left open, close it
             if (currentRowTable != null) {
                 document.add(currentRowTable);
                 currentRowTable = null;
@@ -281,7 +488,7 @@ public class ITextPdfExporter implements PdfExporter {
         if (s.startsWith("#")) {
             s = s.substring(1);
         }
-        if (s.length() == 3) { // expand short form like "f0a" -> "ff00aa"
+        if (s.length() == 3) {
             s = "" + s.charAt(0) + s.charAt(0)
                     + s.charAt(1) + s.charAt(1)
                     + s.charAt(2) + s.charAt(2);

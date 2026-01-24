@@ -28,8 +28,8 @@ public class PostExplosion extends BaseModel {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "post_explosion_archive",
-            joinColumns = {@JoinColumn(name = "post_explosion_id")}, inverseJoinColumns = {@JoinColumn(name = "archive_id")}
+            name = "post_explosion_file",
+            joinColumns = {@JoinColumn(name = "post_explosion_id")}, inverseJoinColumns = {@JoinColumn(name = "file_id")}
     )
-    private List<Archive> archives;
+    private List<File> files;
 }

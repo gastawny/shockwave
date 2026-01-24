@@ -1,18 +1,18 @@
-CREATE TABLE archives
+CREATE TABLE files
 (
-    archive_id BIGINT AUTO_INCREMENT NOT NULL,
+    file_id BIGINT AUTO_INCREMENT NOT NULL,
     name       VARCHAR(255) NULL,
     `path`     VARCHAR(255) NULL,
     data       BLOB NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NULL,
     deleted BIT(1) NULL,
-    CONSTRAINT pk_archives PRIMARY KEY (archive_id)
+    CONSTRAINT pk_files PRIMARY KEY (file_id)
 );
 
-CREATE TABLE bomb_threat_archive
+CREATE TABLE bomb_threat_file
 (
-    archive_id     BIGINT NOT NULL,
+    file_id     BIGINT NOT NULL,
     bomb_threat_id BIGINT NOT NULL
 );
 
@@ -105,9 +105,9 @@ CREATE TABLE permissions
     CONSTRAINT pk_permissions PRIMARY KEY (permission_id)
 );
 
-CREATE TABLE post_explosion_archive
+CREATE TABLE post_explosion_file
 (
-    archive_id        BIGINT NOT NULL,
+    file_id        BIGINT NOT NULL,
     post_explosion_id BIGINT NOT NULL
 );
 
@@ -228,16 +228,16 @@ ALTER TABLE located_objects
 ALTER TABLE post_explosions
     ADD CONSTRAINT FK_POST_EXPLOSIONS_ON_USER FOREIGN KEY (user_id) REFERENCES users (user_id);
 
-ALTER TABLE bomb_threat_archive
-    ADD CONSTRAINT fk_bomthrarc_on_archive_entity FOREIGN KEY (archive_id) REFERENCES archives (archive_id);
+ALTER TABLE bomb_threat_file
+    ADD CONSTRAINT fk_bomthrarc_on_file_entity FOREIGN KEY (file_id) REFERENCES files (file_id);
 
-ALTER TABLE bomb_threat_archive
+ALTER TABLE bomb_threat_file
     ADD CONSTRAINT fk_bomthrarc_on_bomb_threat_entity FOREIGN KEY (bomb_threat_id) REFERENCES bomb_threats (bomb_threat_id);
 
-ALTER TABLE post_explosion_archive
-    ADD CONSTRAINT fk_posexparc_on_archive_entity FOREIGN KEY (archive_id) REFERENCES archives (archive_id);
+ALTER TABLE post_explosion_file
+    ADD CONSTRAINT fk_posexparc_on_file_entity FOREIGN KEY (file_id) REFERENCES files (file_id);
 
-ALTER TABLE post_explosion_archive
+ALTER TABLE post_explosion_file
     ADD CONSTRAINT fk_posexparc_on_post_explosion_entity FOREIGN KEY (post_explosion_id) REFERENCES post_explosions (post_explosion_id);
 
 ALTER TABLE user_permission

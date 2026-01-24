@@ -157,7 +157,6 @@ public class ExplosiveService implements Handler<Explosive> {
 
             explosive.addExplosiveParameter(ep);
         }
-        System.out.println(explosive.getExplosiveParameters());
 
         return explosiveRepository.save(explosive);
     }
@@ -184,7 +183,6 @@ public class ExplosiveService implements Handler<Explosive> {
         return dto;
     }
 
-    // helper to safely parse Long values provided as Object (handles null/empty strings)
     private Long parseLongSafe(Object o) {
         if (o == null) return null;
         String s = o.toString().trim();

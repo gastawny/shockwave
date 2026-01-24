@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "bomb_threats")
@@ -30,13 +32,12 @@ public class BombThreat extends BaseModel {
     @JoinColumn(name = "located_object_id")
     private LocatedObject locatedObject;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
-            name = "bomb_threat_archive",
-            joinColumns = {@JoinColumn(name = "bomb_threat_id")}, inverseJoinColumns = {@JoinColumn(name = "archive_id")}
+            name = "bomb_threat_file",
+            joinColumns = {@JoinColumn(name = "bomb_threat_id")}, inverseJoinColumns = {@JoinColumn(name = "file_id")}
     )
-    @JsonIgnore
-    private List<Archive> archives;
+    private List<File> files = new ArrayList<>();
 
     @Column
     private String name;

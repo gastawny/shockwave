@@ -8,6 +8,14 @@ security:
       secret-key: {SECRET_KEY:ds1fg6G4}
       expire-length: 7200000
 spring:
+  servlet:
+    multipart:
+      # Max size per uploaded file. Use -1 for unlimited (not recommended).
+      max-file-size: 50MB
+      # Max total size for multipart/form-data requests.
+      max-request-size: 50MB
+      # Threshold in memory before writing to disk.
+      file-size-threshold: 2MB
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${MYSQL_JDBC:jdbc:mysql://localhost:3308/shockwave}

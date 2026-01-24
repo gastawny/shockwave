@@ -27,5 +27,5 @@ public class ObjectFormatParameterValue {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "value_id", nullable = false)
-    private ValueNum value;
+    private Value value;
 }

@@ -6,7 +6,6 @@ import java.util.List;
 
 public class GoogleMapGenerator {
 
-    // Default values from the React component
     private static final double DEFAULT_LAT = -25.432120740315266;
     private static final double DEFAULT_LNG = -49.31332254701506;
     private static final int DEFAULT_ZOOM = 12;
@@ -23,7 +22,6 @@ public class GoogleMapGenerator {
      * @param mapType   The type of map (e.g., "roadmap", "satellite").
      * @return The generated URL.
      */
-    // Backwards-compatible overload: no apiKey passed — resolver will find configured key
     public static String generateMapUrl(double lat, double lng, int zoom, String size, String mapType) {
         return generateMapUrl((String) null, lat, lng, zoom, size, mapType);
     }
@@ -95,9 +93,7 @@ public class GoogleMapGenerator {
             urlBuilder.append("&size=").append(size);
             urlBuilder.append("&maptype=").append(mapType);
             urlBuilder.append("&markers=color:red%7C").append(encodedCenter);
-            // append key later only if available (avoid duplicate or empty key param)
 
-            // add circle(s) as encoded path(s)
             if (circles != null && !circles.isEmpty()) {
                 for (CircleConfig circle : circles) {
                     String path = circleToPath(circle);
@@ -118,7 +114,6 @@ public class GoogleMapGenerator {
         }
     }
 
-    // Backwards-compatible overload with circles
     public static String generateMapUrl(double lat, double lng, int zoom, String size, String mapType, List<CircleConfig> circles) {
         return generateMapUrl(null, lat, lng, zoom, size, mapType, circles);
     }
@@ -126,7 +121,6 @@ public class GoogleMapGenerator {
     private static String circleToPath(CircleConfig circle) {
         if (circle == null) return "";
 
-        // default values
         String fillColor = circle.getFillColor() != null ? circle.getFillColor() : "#FF0000";
         String strokeColor = circle.getStrokeColor() != null ? circle.getStrokeColor() : "#FF0000";
         int strokeWeight = circle.getStrokeWeight() != null ? circle.getStrokeWeight() : 2;
@@ -138,14 +132,12 @@ public class GoogleMapGenerator {
         GeoLocation center = circle.getCenter();
         if (center == null) return "";
 
-        // approximate circle with polygon of N points
         int points = 36;
         StringBuilder sb = new StringBuilder();
         sb.append("fillcolor:").append(fillHex).append("|");
         sb.append("color:").append(strokeHex).append("|");
         sb.append("weight:").append(strokeWeight).append("|");
 
-        // generate points around the circle
         double centerLat = center.getLat();
         double centerLng = center.getLng();
         double radiusMeters = circle.getRadius();
@@ -161,7 +153,7 @@ public class GoogleMapGenerator {
     }
 
     private static String toGoogleHex(String hex) {
-        if (hex == null) return "0xFF0000"; // default
+        if (hex == null) return "0xFF0000";
         String s = hex.trim();
         if (s.startsWith("#")) s = s.substring(1);
         if (s.length() == 3) s = "" + s.charAt(0) + s.charAt(0) + s.charAt(1) + s.charAt(1) + s.charAt(2) + s.charAt(2);
@@ -170,19 +162,17 @@ public class GoogleMapGenerator {
     }
 
     private static String toGoogleHexWithAlpha(String hex, double opacity) {
-        String base = toGoogleHex(hex); // returns like 0xRRGGBB
-        // compute alpha (00..FF)
+        String base = toGoogleHex(hex);
         int alpha = (int) Math.round(opacity * 255);
         if (alpha < 0) alpha = 0;
         if (alpha > 255) alpha = 255;
         String alphaHex = String.format("%02X", alpha);
-        // Google Static Map expects 0xRRGGBBAA for fillcolor
+
         return base + alphaHex;
     }
 
-    // Haversine-based destination point: given start lat/lng, bearing (radians) and distance (meters)
     private static double[] destinationPoint(double lat, double lng, double bearingRad, double distanceMeters) {
-        double R = 6378137.0; // Earth radius in meters (WGS84)
+        double R = 6378137.0;
         double dDivR = distanceMeters / R;
         double latRad = Math.toRadians(lat);
         double lngRad = Math.toRadians(lng);
@@ -226,7 +216,6 @@ public class GoogleMapGenerator {
     private static String expandPlaceholder(String val) {
         if (val == null) return null;
         String s = val.trim();
-        // ${ENV_VAR:default}
         if (s.startsWith("${") && s.endsWith("}")) {
             String inner = s.substring(2, s.length() - 1);
             int colon = inner.indexOf(":");

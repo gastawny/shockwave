@@ -1,17 +1,18 @@
 package com.gastawny.shockwave.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity(name = "archives")
+@Entity(name = "files")
 @Getter
 @Setter
-public class Archive extends BaseModel {
+public class File extends BaseModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "archive_id")
+    @Column(name = "file_id")
     private Long id;
 
     @Column
@@ -20,6 +21,7 @@ public class Archive extends BaseModel {
     @Column
     private String path;
 
-    @Column
+    @Lob
+    @Column(columnDefinition = "LONGBLOB")
     private byte[] data;
 }
