@@ -91,7 +91,7 @@ public class LocatedObjectService implements Handler<LocatedObject> {
 
     @Override
     public void deleteById(Long id) {
-
+        locatedObjectRepository.deleteById(id);
     }
 
     @Override
