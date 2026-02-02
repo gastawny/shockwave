@@ -63,9 +63,6 @@ ALTER TABLE constants
 ALTER TABLE constants
     ADD CONSTRAINT uc_constants_value UNIQUE (value_id);
 
-ALTER TABLE formulas
-    ADD CONSTRAINT uc_formulas_name UNIQUE (name);
-
 ALTER TABLE constants
     ADD CONSTRAINT FK_CONSTANTS_ON_VALUE FOREIGN KEY (value_id) REFERENCES value (value_id);
 

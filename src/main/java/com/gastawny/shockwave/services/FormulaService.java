@@ -27,7 +27,7 @@ public class FormulaService {
     }
 
     public List<Formula> get2Report(Map<String, String> values) {
-        var formulas = formulaRepository.findAll();
+        var formulas = formulaRepository.findDistinctByTableTableName("located_objects");
 
         var filteredDependencies = formulas.stream().filter(
                 f -> {

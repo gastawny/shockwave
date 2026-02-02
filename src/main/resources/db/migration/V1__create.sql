@@ -36,7 +36,6 @@ CREATE TABLE explosive_parameters
     explosive_parameter_id BIGINT AUTO_INCREMENT NOT NULL,
     explosive_id           BIGINT                NULL,
     parameter_id           BIGINT                NULL,
-    sequence               TINYINT               NOT NULL,
     value_id               BIGINT                NULL,
     CONSTRAINT pk_explosive_parameters PRIMARY KEY (explosive_parameter_id)
 );

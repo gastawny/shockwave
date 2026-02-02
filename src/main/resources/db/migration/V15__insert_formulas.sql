@@ -31,10 +31,55 @@ INSERT INTO formulas(formula_id, name, expression) VALUES
     (28, 'Pressão refletida', '(8.0*{pressao}^2+1400*{pressao}) / ({pressao}+700)'),
     (29, 'Distância quebra de vidros menores que 1 m²', '58 * ({m_tnt})^(1.0/3)'),
     (30, 'Distância quebra de vidros entre que 1 m² e 3 m²', '86 * ({m_tnt})^(1.0/3)'),
-    (31, 'Distância quebra de vidros maiores que 3 m²', '125 * ({m_tnt})^(1.0/3)');
-# 35 36 37 38 39 40
-#     ('Tamanho da bola de fogo', '3.3 * ({m_tnt})^(1.0/3)');
-# 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 z;
+    (31, 'Distância quebra de vidros maiores que 3 m²', '125 * ({m_tnt})^(1.0/3)'),
+    (32, 'Probabilidade de quebra de vidros menores que 1 m² ', NULL),
+    (33, '({k} < 10000) && (-1.013+3.356*ln({pressao_refletida}) < 5)', '-50 * (1 + erf((6.013-3.356*ln({pressao_refletida})/(2^(1.0/2))))) + 100'),
+    (34, '({k} < 10000) && (-1.013+3.356*ln({pressao_refletida}) > 5)', '-50 * (1 + erf((-6.013+3.356*ln({pressao_refletida})/(2^(1.0/2)))))'),
+    (35, '{k} >= 10000', '0'),
+    (36, 'Probabilidade de quebra de vidros entre 1 m² e 3m²', NULL),
+    (37, '{z} < 10000 && (0.796+3.356*ln({pressao_refletida})) < 5', '-50 * (1 + erf( (4.204-3.356*ln({pressao_refletida})) / (2^(1.0/2)) )) + 100'),
+    (38, '{z} < 10000 && (0.796+3.356*ln({pressao_refletida})) > 5', '50 * (1 + erf( (-4.204+3.356*ln({pressao_refletida})) / (2^(1.0/2)) ))'),
+    (39, '{z} >= 10000', '0'),
+    (40, 'Probabilidade de quebra de vidros maiores que 3 m²', NULL),
+    (41, '{z} < 10000 && (2.674+3.356*ln({pressao_refletida})) < 5', '-50 * (1 + erf( (2.326-3.356*ln({pressao_refletida})) / (2^(1.0/2)) )) + 100'),
+    (42, '{z} < 10000 && (0.796+3.356*ln({pressao_refletida})) > 5', '50 * (1 + erf( (-2.326+3.356*ln({pressao_refletida})) / (2^(1.0/2)) ))'),
+    (43, '{z} >= 10000', '0'),
+    (44, 'Tamanho da bola de fogo', '3.3 * ({m_tnt})^(1.0/3)'),
+    (45, 'Fator X', '{R}*3.28084 / ({m_tnt}*2.2046233)^(1.0/3)'),
+    (46, 'dx', NULL),
+    (47, '{x} < 0.5', ''),  -- Fora da Faixa
+    (48, '0.5 <= {x} && {x} < 2.5', '{R} * 2.2 * exp(((((−0.608*ln({x})−0.05773)*0.9246+1.1249)*ln({x})+1.3552)*ln({x})+0.45)*ln({x})−1.7221)'),
+    (49, '2.5 <= {x} && {x} < 7', '{R} * 2.2 * exp(((((0.8817*ln({x})−8.3256)*ln({x})+32.0236)*ln({x})+60.4348)*ln({x})+55.0513}*ln({x})−18.7701)'),
+    (50, '7 <= {x} && {x} < 100', '{R} * 2.2 * exp(((((0.02624*ln({x})−0.4647)*ln({x})+3.2552)*ln({x})−11.2975}*ln({x})+19.7805}*ln({x})−13.0597)'),
+    (51, '{x} >= 100', ''),  -- Fora da Faixa
+    (52, 'qc', '5.0 * ({pressao}*1000)^2 / (2*{pressao}*1000+1400000)'),
+    (53, 'Tc', '{dx} * 0.0772275'),
+    (54, 'ic', '(500.0 * {pressao} + {qc}/2) * {dx}/1311708.7'),
+    (55, 'Pc', '({pressao}*1000.0+{qc}) / 101300'),
+    (56, 'Sc', '1.3/{ic} + 4.2/{Pc}'),
+    (57, 'Prc', '5 - 5.74 * ln({Sc})'),
+    (58, 'Danos pulmonares em campo aberto', '(112.0/{PI} * ((atan(1.55*sinal({Prc}-5)*abs({Prc}-5)^1.32)) + {PI}/2) - 6) / 100'),
+    (59, 'ip', '500 * {pressa_refletida} * {dx} / 1311708.7'),
+    (60, 'Pp', '{pressao_refletida} / 101.3'),
+    (61, 'Sp', '1.3/{ip} + 4.2/{Pp}'),
+    (62, 'Prp', '5 - 5.74 * ln({Sp})'),
+    (63, 'Danos pulmonares próximo a parede', '(112.0/{PI} * ((atan(1.55*sinal({Prp}-5)*abs({Prp}-5)^1.32)) + {PI}/2) - 6) / 100'),
+    (64, 'D 1% surdez', '13.5 * ({m_tnt})^(1.0/3)'),
+    (65, 'Intensidade de ruídos', '-0.1952 * (ln({pressao}))^2 + 9.7578 * ln({pressao}) + 171.31'),
+    (66, 'Prac', '-12.6 + 1.524 * ln({pressao}*1000)'),
+    (67, 'DPca', '(112.0/{PI} * ((atan(1.55*sinal({Prac}-5)*abs({Prac}-5)^1.32)) + {PI}/2) - 6) / 100'),
+    (68, 'Prap', '-12.6 + 1.524 * ln({pressao_refletida}*1000)'),
+    (69, 'DPpp', '(112.0/{PI} * ((atan(1.55*sinal({Prap}-5)*abs({Prap}-5)^1.32)) + {PI}/2) - 6) / 100'),
+    (70, 'SE', NULL),
+    (71, '{pressao_refletida} < 90', 'exp(1.1023+0.000155*{pressao_refletida}^2-3.1628/({pressa_refletida}^1.5))'),
+    (72, '{pressao_refletida} >= 90', '10.5'),
+    (73, 'Probabilidade de letalidade', NULL),
+    (74, '{z} < 10000', '100 - 0.5 * (1+erf(({SE}+5)/2^(0.5))) * 100'),
+    (75, '{z} >= 10000', '0'),
+    (76, 'Ponto crítico', '2 * {PI} * {Rvest}'),
+    (77, 'Zona estéril', '3 * {PI} * {Rvest}'),
+    (78, 'Zona tampão', '2 * {PI} * (1.5*{Rvest}+100)');
+
 
 INSERT INTO parameter_dependencies(parameter_id, reference_table, reference_column, reference_id) VALUES
     (5, 'grounds', 'k', NULL);
@@ -60,7 +105,12 @@ INSERT INTO formula_constants(formula_id, constant_id) VALUES
     (4, 1),
     (8, 4),
     (9, 3),
-    (10, 2);
+    (10, 2),
+    (58, 1),
+    (63, 1),
+    (76, 1),
+    (77, 1),
+    (78, 1);
 
 INSERT INTO formula_compositions(main_formula_id, component_formula_id, alias) VALUES
     (7, 6, 'm_explosivo'),
@@ -85,7 +135,56 @@ INSERT INTO formula_compositions(main_formula_id, component_formula_id, alias) V
     (28, 24, 'pressao'),
     (29, 7, 'm_tnt'),
     (30, 7, 'm_tnt'),
-    (31, 7, 'm_tnt');
+    (31, 7, 'm_tnt'),
+    (33, 23, 'k'),
+    (34, 23, 'k'),
+    (35, 23, 'k'),
+    (33, 28, 'pressao_refletida'),
+    (34, 28, 'pressao_refletida'),
+    (37, 22, 'z'),
+    (38, 22, 'z'),
+    (39, 22, 'z'),
+    (37, 28, 'pressao_refletida'),
+    (38, 28, 'pressao_refletida'),
+    (42, 22, 'z'),
+    (43, 22, 'z'),
+    (42, 28, 'pressao_refletida'),
+    (44, 7, 'm_tnt'),
+    (45, 7, 'm_tnt'),
+    (47, 45, 'x'),
+    (48, 45, 'x'),
+    (49, 45, 'x'),
+    (50, 45, 'x'),
+    (51, 45, 'x'),
+    (52, 24, 'pressao'),
+    (53, 46, 'dx'),
+    (54, 24, 'pressao'),
+    (54, 52, 'qc'),
+    (54, 46, 'dx'),
+    (55, 24, 'pressao'),
+    (55, 52, 'qc'),
+    (56, 54, 'ic'),
+    (56, 55, 'Pc'),
+    (57, 56, 'Sc'),
+    (58, 57, 'Prc'),
+    (59, 28, 'pressao_refletida'),
+    (59, 46, 'dx'),
+    (60, 28, 'pressao_refletida'),
+    (61, 59, 'ip'),
+    (61, 60, 'Pp'),
+    (62, 61, 'Sp'),
+    (63, 62, 'Prp'),
+    (64, 7, 'm_tnt'),
+    (65, 24, 'pressao'),
+    (66, 24, 'pressao'),
+    (67, 66, 'Prac'),
+    (68, 28, 'pressao_refletida'),
+    (69, 68, 'Prap'),
+    (71, 28, 'pressao_refletida'),
+    (72, 28, 'pressao_refletida'),
+    (74, 23, 'z'),
+    (75, 23, 'z'),
+    (74, 70, 'SE');
 
 INSERT INTO formula_dependencies(alias, reference_table) VALUES
     ('dep_volume', 'object_formats');
@@ -97,16 +196,40 @@ INSERT INTO formula_dependency_mappings(formula_dependency_id, formula_id, refer
     (1, 4, 4),
     (1, 5, 2);
 
+INSERT INTO formula_formula_dependencies(formula_dependency_id, formula_id) VALUES
+    (1, 6);
+
 INSERT INTO formula_decision(formula_id) VALUES
     (13),
-    (24);
+    (24),
+    (32),
+    (36),
+    (40),
+    (46),
+    (70),
+    (73);
 
 INSERT INTO formula_decision_mappings(formula_decision_id, formula_id) VALUES
     (1, 14),
     (1, 15),
     (2, 25),
     (2, 26),
-    (2, 27);
-
-INSERT INTO formula_formula_dependencies(formula_dependency_id, formula_id) VALUES
-    (1, 6);
+    (2, 27),
+    (3, 33),
+    (3, 34),
+    (3, 35),
+    (4, 37),
+    (4, 38),
+    (4, 39),
+    (5, 41),
+    (5, 42),
+    (5, 43),
+    (6, 47),
+    (6, 48),
+    (6, 49),
+    (6, 50),
+    (6, 51),
+    (7, 71),
+    (7, 72),
+    (8, 74),
+    (8, 75);

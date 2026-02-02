@@ -26,11 +26,13 @@ public class UserService implements UserDetailsService, Handler<User> {
     private final UserRepository repository;
     private final PermissionRepository permissionRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
 
-    public UserService(UserRepository repository, PermissionRepository permissionRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository repository, PermissionRepository permissionRepository, PasswordEncoder passwordEncoder, UserRepository userRepository) {
         this.repository = repository;
         this.permissionRepository = permissionRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -52,7 +54,7 @@ public class UserService implements UserDetailsService, Handler<User> {
 
     @Override
     public Object getService() {
-        return new UserService(repository, permissionRepository, passwordEncoder);
+        return new UserService(repository, permissionRepository, passwordEncoder, userRepository);
     }
 
     @Override
@@ -100,15 +102,18 @@ public class UserService implements UserDetailsService, Handler<User> {
     public User update(Map<String, Object> entity) {
         ObjectMapper mapper = new ObjectMapper();
 
-        User user = new User();
         UserDTO dto = mapper.convertValue(entity, UserDTO.class);
+        var user = repository.findById(dto.getId()).orElse(null);
 
-        user.setId(dto.getId());
+        if(user == null) {
+            return null;
+        }
+
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setEmail(dto.getEmail());
 
-        if(dto.getPassword() != null) {
+        if(dto.getPassword() != null && !dto.getPassword().isEmpty()) {
             user.setPassword(passwordEncoder.encode(dto.getPassword()));
         }
 

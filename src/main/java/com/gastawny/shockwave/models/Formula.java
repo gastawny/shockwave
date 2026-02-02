@@ -1,5 +1,6 @@
 package com.gastawny.shockwave.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -60,4 +61,13 @@ public class Formula extends BaseModel{
 
     @OneToOne(mappedBy = "formula", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private FormulaCircle circle;
+
+    @JsonIgnore
+    @OneToMany(
+            mappedBy = "formula",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER
+    )
+    private List<FormulaTable> table;
 }

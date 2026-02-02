@@ -5,7 +5,7 @@
     <option name="snapshotDbValue" value="07d81bf6-456a-439d-8681-cc82256161f6" />
     <option name="snapshotModelValue" value="shockwave:entityManagerFactory" />
     <option name="sourceDbValue" value="07d81bf6-456a-439d-8681-cc82256161f6" />
-    <option name="sourceModelValue" value="shockwave:shockwave" />
+    <option name="sourceModelValue" value="shockwave:entityManagerFactory" />
     <option name="targetDbValue" value="07d81bf6-456a-439d-8681-cc82256161f6" />
   </component>
 </project>
