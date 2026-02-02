@@ -40,6 +40,18 @@ public class LocatedObject extends BaseModel {
     @JoinColumn(name = "object_format_id")
     private ObjectFormat objectFormat;
 
+    @Column
+    private String street;
+
+    @Column
+    private String number;
+
+    @Column
+    private String city;
+
+    @Column
+    private String cep;
+
     @OneToMany(
             mappedBy = "locatedObject",
             cascade = CascadeType.ALL,
