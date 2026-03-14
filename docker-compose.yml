@@ -40,7 +40,7 @@ services:
       SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "80"
+      - "80:8888"
     depends_on:
       db:
         condition: service_healthy
