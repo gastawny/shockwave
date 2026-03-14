@@ -30,17 +30,19 @@ services:
       start_period: 30s
 
   shockwave:
-    image: ghcr.io/gastawny/shockwave/shockwave:${IMAGE_TAG:-master}
+    image: 'ghcr.io/gastawny/shockwave/shockwave:${IMAGE_TAG:-master}'
     pull_policy: always
     container_name: shockwave-app
     restart: unless-stopped
     environment:
       TZ: America/Sao_Paulo
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:${MYSQL_PORT:-3308}/${MYSQL_DATABASE:-shockwave}?useTimezone=true&serverTimezone=UTC
-      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
-      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
-    ports:
-      - "80:8888"
+      SPRING_DATASOURCE_URL: 'jdbc:mysql://db:${MYSQL_PORT:-3308}/${MYSQL_DATABASE:-shockwave}?useTimezone=true&serverTimezone=UTC'
+      SPRING_DATASOURCE_USERNAME: '${MYSQL_USER}'
+      SPRING_DATASOURCE_PASSWORD: '${MYSQL_PASSWORD}'
+    expose:
+      - "80"
+    labels:
+      - "caddy_0.handle_path.0_reverse_proxy={{upstreams 80}}"
     depends_on:
       db:
         condition: service_healthy
