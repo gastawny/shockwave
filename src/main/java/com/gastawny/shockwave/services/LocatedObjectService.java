@@ -103,10 +103,11 @@ public class LocatedObjectService implements Handler<LocatedObject> {
         var locatedObject = findById(locatedObjectId);
         Map<String, String> values = new HashMap<>(Map.of());
 
-        values.put("tab_k", locatedObject.getGround().getId().toString());
+        values.put("tab_k", locatedObject.getGround().getK().toString());
         values.put("dep_volume", locatedObject.getObjectFormat().getId().toString());
+        values.put("R", locatedObject.getDistance().toString());
         values.put("densidade", explosiveRepository.findValueByParameterSymbol("densidade", locatedObject.getExplosive().getId()).get("value").toString());
-        values.put("efeito_relativo_tnt", explosiveRepository.findValueByParameterSymbol("efeito_relativo_tnt", locatedObject.getExplosive().getId()).get("value").toString());
+        values.put("poder", explosiveRepository.findValueByParameterSymbol("efeito_relativo_tnt", locatedObject.getExplosive().getId()).get("value").toString());
 
         for (var paramValue : locatedObject.getObjectFormatParameterValues()) {
             values.put(paramValue.getObjectFormatParameter().getParameter().getSymbol(), paramValue.getValue().getValue().toString());

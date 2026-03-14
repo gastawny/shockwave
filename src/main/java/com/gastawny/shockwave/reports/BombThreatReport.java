@@ -143,7 +143,7 @@ public class BombThreatReport {
         for(var values : lo.getObjectFormatParameterValues()) {
             pdf.addInlineText(List.of(
                     TextSpan.of(values.getObjectFormatParameter().getParameter().getName() + ": ", new TextStyle().bold()),
-                    TextSpan.of(values.getValue().getValue().toString())
+                    TextSpan.of(values.getValue().getValue().toString() + " cm")
             ));
         }
 
@@ -162,9 +162,11 @@ public class BombThreatReport {
                 continue;
             }
 
+            var value = result + " " + entry.getValue().getFormula().getUnit();
+
             pdf.addInlineText(List.of(
                     TextSpan.of(entry.getKey() + ": ", new TextStyle().bold()),
-                    TextSpan.of(result.toString())
+                    TextSpan.of(value)
             ));
         }
 
@@ -250,7 +252,9 @@ public class BombThreatReport {
                 .map(formula -> {
                     try {
                         Double result = formulaService.execute(formula, valuesParameters);
-                        return Map.entry(formula.getName(), new FormulaResult(formula, result));
+                        var resultFormatted = Math.round(result * 100.0) / 100.0;
+
+                        return Map.entry(formula.getName(), new FormulaResult(formula, resultFormatted));
                     } catch (Throwable t) {
                         return Map.entry(formula.getId().toString(), new FormulaResult(formula, null));
                     }

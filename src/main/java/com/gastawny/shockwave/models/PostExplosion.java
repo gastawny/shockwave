@@ -38,6 +38,18 @@ public class PostExplosion extends BaseModel {
     @Column
     private Double longitude;
 
+    @Column
+    private String street;
+
+    @Column
+    private String number;
+
+    @Column
+    private String city;
+
+    @Column
+    private String cep;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "post_explosion_file",

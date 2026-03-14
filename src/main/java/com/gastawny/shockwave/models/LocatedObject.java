@@ -41,6 +41,9 @@ public class LocatedObject extends BaseModel {
     private ObjectFormat objectFormat;
 
     @Column
+    private Double distance;
+
+    @Column
     private String street;
 
     @Column

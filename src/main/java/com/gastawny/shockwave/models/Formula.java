@@ -27,6 +27,9 @@ public class Formula extends BaseModel{
     @Column
     private String expression;
 
+    @Column
+    private String unit;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "formula_parameters",

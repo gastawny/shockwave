@@ -140,7 +140,7 @@ public class PostExplosionService implements Handler<PostExplosion> {
                         }
 
                         return dto;
-                    } catch (Throwable _) {
+                    } catch (Throwable e) {
                         var dto = new CircleDTO();
                         dto.setName(formula.getName());
                         dto.setRadius(vestigeDistance);

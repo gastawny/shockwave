@@ -40,6 +40,7 @@ CREATE TABLE formulas
     deleted BIT(1) DEFAULT 0      NULL,
     name       VARCHAR(255)          NULL,
     expression VARCHAR(255)          NULL,
+    unit       VARCHAR(50)           NULL,
     CONSTRAINT pk_formulas PRIMARY KEY (formula_id)
 );
 

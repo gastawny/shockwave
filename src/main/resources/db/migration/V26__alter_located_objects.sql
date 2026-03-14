@@ -9,3 +9,6 @@ ALTER TABLE located_objects
 
 ALTER TABLE located_objects
     ADD street VARCHAR(255) NULL;
+
+ALTER TABLE located_objects
+    ADD distance DOUBLE NULL;

@@ -1,5 +1,9 @@
 package com.gastawny.shockwave.shared.formulas;
 
+import com.gastawny.shockwave.shared.formulas.calculations.Erf;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
@@ -28,7 +32,7 @@ public class Calculation {
                                 classes.add(c);
                             }
                         }
-                    } catch (IOException _) {
+                    } catch (IOException e) {
                     }
                     processorClasses = Collections.unmodifiableList(classes);
                 }
@@ -40,7 +44,7 @@ public class Calculation {
             try {
                 Calculable inst = procClass.getDeclaredConstructor().newInstance();
                 res = inst.execute(res);
-            } catch (Throwable _) {
+            } catch (Throwable e) {
             }
         }
 
@@ -66,7 +70,7 @@ public class Calculation {
                         findClassesInJar(path, jar, classes);
                     }
                 }
-            } catch (Exception _) {
+            } catch (Exception e) {
             }
         }
         return classes;
@@ -102,5 +106,24 @@ public class Calculation {
                 }
             }
         }
+    }
+
+    public static <T> T calculateExpression(String expression, Class<T> type) {
+        StandardEvaluationContext context = new StandardEvaluationContext();
+
+        try {
+            context.registerFunction(
+                    "erf",
+                    Erf.class.getDeclaredMethod("erf", double.class)
+            );
+        } catch (NoSuchMethodException e) {
+            return null;
+        }
+
+        SpelExpressionParser parser = new SpelExpressionParser();
+
+        return parser
+                .parseExpression(expression)
+                .getValue(context, type);
     }
 }
