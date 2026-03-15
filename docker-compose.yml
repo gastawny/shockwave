@@ -24,6 +24,8 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
+    ports:
+      - '${MYSQL_PORT:-3308}:3308'
 
   shockwave:
     image: ghcr.io/gastawny/shockwave/shockwave:${IMAGE_TAG:-master}
