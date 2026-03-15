@@ -1,5 +1,6 @@
 package com.gastawny.shockwave.services;
 
+import com.gastawny.shockwave.dto.formula.CircleDTO;
 import com.gastawny.shockwave.dto.formula.FormulaExpandedDTO;
 import com.gastawny.shockwave.models.*;
 import com.gastawny.shockwave.repositories.FormulaRepository;
@@ -123,8 +124,6 @@ public class FormulaService {
         }
 
         expression = Calculation.runAll(expression);
-
-        System.out.println(expression);
 
         return Calculation.calculateExpression(expression, type);
     }
@@ -260,5 +259,39 @@ public class FormulaService {
 
     private List<Parameter> getAllParameters(Formula formula) {
         return getAllParametersRecursion(formula.getParameters(), formula);
+    }
+
+    public List<CircleDTO> getCircles(Long locateObjectId) {
+        var formulas = formulaRepository.findDistinctByTableTableName("locatedObjectsCircles");
+
+        Map<String, String> valuesParameters = getParameterValues(Map.of(
+                "locatedObjectId", locateObjectId.toString()
+        ));
+
+        return formulas
+                .stream()
+                .map(formula -> {
+                    try {
+                        Double result = execute(formula, valuesParameters);
+                        var dto = new CircleDTO();
+                        dto.setName(formula.getName());
+                        dto.setRadius(result);
+
+                        if(formula.getCircle() != null) {
+                            dto.setColor(formula.getCircle().getColor());
+                        } else {
+                            dto.setColor("#FF0000");
+                        }
+
+                        return dto;
+                    } catch (Throwable e) {
+                        var dto = new CircleDTO();
+                        dto.setName(formula.getName());
+                        dto.setRadius(0.0);
+                        dto.setColor("#FF0000");
+                        return dto;
+                    }
+                })
+                .toList();
     }
 }
