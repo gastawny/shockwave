@@ -4,12 +4,14 @@ import com.gastawny.shockwave.repositories.ExplosiveRepository;
 import com.gastawny.shockwave.shared.exports.pdfs.PdfExporter;
 import com.gastawny.shockwave.shared.exports.pdfs.PdfExporterFactory;
 import com.gastawny.shockwave.shared.exports.pdfs.PdfExporterType;
+import com.gastawny.shockwave.shared.exports.pdfs.styles.ImageStyle;
 import com.gastawny.shockwave.shared.exports.pdfs.styles.TextSpan;
 import com.gastawny.shockwave.shared.exports.pdfs.styles.TextStyle;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Base64;
 import java.util.List;
 
 @Component
@@ -45,6 +47,18 @@ public class ExplosiveReport {
                         TextSpan.of(data.get("name")+": ", new TextStyle().bold()),
                         TextSpan.of(value)
                 ));
+            }
+
+            var image = explosive.getImage();
+            if (image != null && image.getData() != null && image.getData().length > 0) {
+                pdf.startRow(1);
+                try {
+                    String base64 = Base64.getEncoder().encodeToString(image.getData());
+                    pdf.addRowCellWithImage("", new String[]{base64}, new ImageStyle());
+                } catch (IOException e) {
+                    pdf.addRowCell("");
+                }
+                pdf.endRow();
             }
 
             pdf.addSeparator();

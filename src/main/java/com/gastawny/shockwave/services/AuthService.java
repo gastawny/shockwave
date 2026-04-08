@@ -6,6 +6,7 @@ import com.gastawny.shockwave.models.User;
 import com.gastawny.shockwave.repositories.ExplosiveRepository;
 import com.gastawny.shockwave.repositories.UserRepository;
 import com.gastawny.shockwave.security.jwt.JwtTokenProvider;
+import com.gastawny.shockwave.shared.enums.AuditAction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -20,12 +21,14 @@ public class AuthService {
     private AuthenticationManager authenticationManager;
     private UserRepository repository;
     private ExplosiveRepository explosiveRepository;
+    private AuditLogService auditLogService;
 
-    public AuthService(JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager, UserRepository repository, ExplosiveRepository explosiveRepository) {
+    public AuthService(JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager, UserRepository repository, ExplosiveRepository explosiveRepository, AuditLogService auditLogService) {
         this.tokenProvider = tokenProvider;
         this.authenticationManager = authenticationManager;
         this.repository = repository;
         this.explosiveRepository = explosiveRepository;
+        this.auditLogService = auditLogService;
     }
 
     public ResponseEntity<TokenDTO> signIn(AccountCredentialsDTO data) {
@@ -38,7 +41,9 @@ public class AuthService {
                     () -> new UsernameNotFoundException("Email " + email + " not found")
             );
 
-            return ResponseEntity.ok(tokenProvider.createAccessToken(user.getEmail(), user.getRoles()));
+            var token = tokenProvider.createAccessToken(user.getEmail(), user.getRoles());
+            auditLogService.log(AuditAction.LOGIN, "users", user.getId(), user.getId());
+            return ResponseEntity.ok(token);
         } catch (Exception e) {
             throw new BadCredentialsException("Invalid email/password supplied");
         }

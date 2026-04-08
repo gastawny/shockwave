@@ -22,6 +22,10 @@ public class Explosive extends BaseModel {
     @Column
     private String name;
 
+    @ManyToOne
+    @JoinColumn(name = "image_id")
+    private File image;
+
     @JsonIgnore
     @OneToMany(mappedBy = "explosive", cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private List<ExplosiveParameter> explosiveParameters;

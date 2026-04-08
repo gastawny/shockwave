@@ -6,10 +6,12 @@ import com.gastawny.shockwave.dto.explosive.ExplosiveDataDTO;
 import com.gastawny.shockwave.models.*;
 import com.gastawny.shockwave.reports.ExplosiveReport;
 import com.gastawny.shockwave.repositories.ExplosiveRepository;
+import com.gastawny.shockwave.repositories.FileRepository;
 import com.gastawny.shockwave.shared.GenericList;
 import com.gastawny.shockwave.shared.enums.ValueType;
 import com.gastawny.shockwave.shared.handlers.Handler;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -20,10 +22,12 @@ public class ExplosiveService implements Handler<Explosive> {
 
     private final ExplosiveRepository explosiveRepository;
     private final ExplosiveReport explosiveReport;
+    private final FileRepository fileRepository;
 
-    public ExplosiveService(ExplosiveRepository explosiveRepository, ExplosiveReport formulaReport) {
+    public ExplosiveService(ExplosiveRepository explosiveRepository, ExplosiveReport formulaReport, FileRepository fileRepository) {
         this.explosiveReport = formulaReport;
         this.explosiveRepository = explosiveRepository;
+        this.fileRepository = fileRepository;
     }
 
     @Override
@@ -38,7 +42,7 @@ public class ExplosiveService implements Handler<Explosive> {
 
     @Override
     public Object getService() {
-        return new ExplosiveService(explosiveRepository, explosiveReport);
+        return new ExplosiveService(explosiveRepository, explosiveReport, fileRepository);
     }
 
     @Override
@@ -192,6 +196,34 @@ public class ExplosiveService implements Handler<Explosive> {
         } catch (NumberFormatException e) {
             return null;
         }
+    }
+
+    public File getImage(Long id) {
+        Explosive explosive = explosiveRepository.findById(id).orElse(null);
+        if (explosive == null) return null;
+        return explosive.getImage();
+    }
+
+    public Explosive updateImage(Long id, MultipartFile imageFile) throws IOException {
+        Explosive explosive = explosiveRepository.findById(id).orElse(null);
+        if (explosive == null) return null;
+
+        File oldImage = explosive.getImage();
+        if (oldImage != null) {
+            explosive.setImage(null);
+            explosiveRepository.save(explosive);
+            fileRepository.delete(oldImage);
+        }
+
+        if (imageFile != null && !imageFile.isEmpty()) {
+            File file = new File();
+            file.setName(imageFile.getOriginalFilename());
+            file.setData(imageFile.getBytes());
+            fileRepository.save(file);
+            explosive.setImage(file);
+        }
+
+        return explosiveRepository.save(explosive);
     }
 
     public void getReportById(OutputStream outputStream) throws IOException {
