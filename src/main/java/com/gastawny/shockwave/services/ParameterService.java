@@ -37,6 +37,23 @@ public class ParameterService implements Handler<Parameter> {
         );
     }
 
+    public String resolveForLocatedObject(ParameterDependency dependency, Long locatedObjectId) {
+        Long dataId;
+        if (dependency.getContextFkColumn() != null && !dependency.getContextFkColumn().isBlank()) {
+            Double fk = metadataRepository.resolveParameterDependencySymbol(
+                    "located_objects", dependency.getContextFkColumn(), locatedObjectId);
+            dataId = fk.longValue();
+        } else {
+            dataId = locatedObjectId;
+        }
+        Double value = metadataRepository.resolveParameterDependencySymbol(
+                dependency.getReferenceTable(), dependency.getReferenceColumn(), dataId);
+        if (value == Math.floor(value) && !Double.isInfinite(value)) {
+            return String.valueOf(value.longValue());
+        }
+        return value.toString();
+    }
+
     @Override
     public String getType() {
         return "parameters";

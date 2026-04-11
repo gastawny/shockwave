@@ -6,6 +6,7 @@ import com.gastawny.shockwave.models.*;
 import com.gastawny.shockwave.repositories.*;
 import com.gastawny.shockwave.shared.GenericList;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,24 +15,27 @@ import java.util.Map;
 @Service
 public class LocatedObjectService implements Handler<LocatedObject> {
 
-    private final ExplosiveRepository explosiveRepository;
     private final GroundRepository groundRepository;
     private final LocatedObjectRepository  locatedObjectRepository;
     private final ObjectFormatParameterValueRepository objectFormatParameterValueRepository;
     private final ObjectFormatParameterRepository objectFormatParameterRepository;
+    private final ParameterDependencyRepository parameterDependencyRepository;
+    private final ParameterService parameterService;
 
     public LocatedObjectService(
             LocatedObjectRepository locatedObjectRepository,
-            ExplosiveRepository explosiveRepository,
             GroundRepository groundRepository,
             ObjectFormatParameterValueRepository objectFormatParameterValueRepository,
-            ObjectFormatParameterRepository objectFormatParameterRepository
+            ObjectFormatParameterRepository objectFormatParameterRepository,
+            ParameterDependencyRepository parameterDependencyRepository,
+            ParameterService parameterService
     ) {
         this.locatedObjectRepository = locatedObjectRepository;
-        this.explosiveRepository = explosiveRepository;
         this.groundRepository = groundRepository;
         this.objectFormatParameterValueRepository = objectFormatParameterValueRepository;
         this.objectFormatParameterRepository = objectFormatParameterRepository;
+        this.parameterDependencyRepository = parameterDependencyRepository;
+        this.parameterService = parameterService;
     }
 
     @Override
@@ -46,7 +50,7 @@ public class LocatedObjectService implements Handler<LocatedObject> {
 
     @Override
     public Object getService() {
-        return new LocatedObjectService(locatedObjectRepository, explosiveRepository, groundRepository, objectFormatParameterValueRepository, objectFormatParameterRepository);
+        return new LocatedObjectService(locatedObjectRepository, groundRepository, objectFormatParameterValueRepository, objectFormatParameterRepository, parameterDependencyRepository, parameterService);
     }
 
     @Override
@@ -99,18 +103,22 @@ public class LocatedObjectService implements Handler<LocatedObject> {
         return locatedObjectRepository.findBy(GenericList.class);
     }
 
+    @Transactional(readOnly = true)
     public Map<String, String> getValues(Long locatedObjectId) {
         var locatedObject = findById(locatedObjectId);
-        Map<String, String> values = new HashMap<>(Map.of());
+        Map<String, String> values = new HashMap<>();
 
-        values.put("tab_k", locatedObject.getGround().getK().toString());
-        values.put("dep_volume", locatedObject.getObjectFormat().getId().toString());
-        values.put("R", locatedObject.getDistance().toString());
-        values.put("densidade", explosiveRepository.findValueByParameterSymbol("densidade", locatedObject.getExplosive().getId()).get("value").toString());
-        values.put("poder", explosiveRepository.findValueByParameterSymbol("efeito_relativo_tnt", locatedObject.getExplosive().getId()).get("value").toString());
+        for (var dep : parameterDependencyRepository.findAll()) {
+            values.put(dep.getParameter().getSymbol(), parameterService.resolveForLocatedObject(dep, locatedObjectId));
+        }
 
-        for (var paramValue : locatedObject.getObjectFormatParameterValues()) {
-            values.put(paramValue.getObjectFormatParameter().getParameter().getSymbol(), paramValue.getValue().getValue().toString());
+        for (var ep : locatedObject.getExplosive().getExplosiveParameters()) {
+            values.put(ep.getParameter().getSymbol(), ep.getValue().getValue().toString());
+        }
+
+        for (var pv : locatedObject.getObjectFormatParameterValues()) {
+            values.put(pv.getObjectFormatParameter().getParameter().getSymbol(),
+                       pv.getValue().getValue().toString());
         }
         return values;
     }

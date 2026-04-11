@@ -28,4 +28,7 @@ public class ParameterDependency {
 
     @Column
     private Long referenceId;
+
+    @Column(length = 50)
+    private String contextFkColumn;
 }

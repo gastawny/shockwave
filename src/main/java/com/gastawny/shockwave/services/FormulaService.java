@@ -5,10 +5,12 @@ import com.gastawny.shockwave.dto.formula.FormulaExpandedDTO;
 import com.gastawny.shockwave.models.*;
 import com.gastawny.shockwave.repositories.FormulaRepository;
 import com.gastawny.shockwave.shared.formulas.Calculation;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class FormulaService {
@@ -140,7 +142,7 @@ public class FormulaService {
 
     private String getExpressionDependencies(Formula formula, Boolean showConstantsValues, String expression, Map<String, String> values) {
         for (var dependency : formula.getDependencies()) {
-            Long id = Long.valueOf(values.get(dependency.getAlias()));
+            Long id = (long) Double.parseDouble(values.get(dependency.getAlias()));
 
             var map = dependency.getMappings().stream()
                     .filter(m -> m.getReferenceId().equals(id))
